@@ -1,6 +1,6 @@
-package com.example.SpringApp008D.Repository;
+package grupo2.proyecto.full.stack1.Repository;
 
-import com.example.SpringApp008D.Model.Product;
+import grupo2.proyecto.full.stack1.Modelo.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

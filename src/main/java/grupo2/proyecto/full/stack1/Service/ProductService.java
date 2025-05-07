@@ -1,7 +1,7 @@
-package com.example.SpringApp008D.Service;
+package grupo2.proyecto.full.stack1.Service;
 
-import com.example.SpringApp008D.Model.Product;
-import com.example.SpringApp008D.Repository.ProductRepository;
+import grupo2.proyecto.full.stack1.Modelo.Product;
+import grupo2.proyecto.full.stack1.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,11 +1,9 @@
-package com.example.SpringApp008D.Controller;
+package grupo2.proyecto.full.stack1.Controller;
 
-import com.example.SpringApp008D.Model.Product;
-import com.example.SpringApp008D.Service.ProductService;
+import grupo2.proyecto.full.stack1.Modelo.Product;
+import grupo2.proyecto.full.stack1.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")

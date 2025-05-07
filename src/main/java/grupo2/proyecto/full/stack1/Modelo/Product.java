@@ -1,4 +1,4 @@
-package com.example.SpringApp008D.Model;
+package grupo2.proyecto.full.stack1.Modelo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

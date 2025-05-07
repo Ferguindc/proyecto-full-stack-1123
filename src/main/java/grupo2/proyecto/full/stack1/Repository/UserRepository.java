@@ -1,6 +1,6 @@
-package com.example.SpringApp008D.Repository;
+package grupo2.proyecto.full.stack1.Repository;
 
-import com.example.SpringApp008D.Model.User;
+import grupo2.proyecto.full.stack1.Modelo.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

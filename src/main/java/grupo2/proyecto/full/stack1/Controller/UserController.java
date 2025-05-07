@@ -1,7 +1,7 @@
-package com.example.SpringApp008D.Controller;
+package grupo2.proyecto.full.stack1.Controller;
 
-import com.example.SpringApp008D.Model.User;
-import com.example.SpringApp008D.Service.UserService;
+import grupo2.proyecto.full.stack1.Modelo.User;
+import grupo2.proyecto.full.stack1.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
