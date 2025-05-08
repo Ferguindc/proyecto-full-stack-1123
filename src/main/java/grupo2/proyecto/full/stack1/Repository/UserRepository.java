@@ -25,14 +25,14 @@ public class UserRepository {
 
     public String addUser(User user) {
         users.add(user);
-        return "Usuario agregado con exito";
+        return "Usuario agregado exitosamente";
     }
 
     public String removeUser(int id) {
         for (User user : users) {
             if (user.getId() == id) {
                 users.remove(user);
-                return "Usuario removido con exito";
+                return "Usuario removido exitosamente";
             }
         }
         return "Usuario no encontrado";
@@ -54,8 +54,8 @@ public class UserRepository {
         String output = "";
         for (User user : users) {
             output += "Id: " + user.getId() + "\n";
-            output += "Username: " + user.getUsername() + "\n";
-            output += "Password: " + user.getPassword() + "\n";
+            output += "Usuario: " + user.getUsername() + "\n";
+            output += "Contraseña: " + user.getPassword() + "\n";
             output += "Email: " + user.getEmail() + "\n\n";
         }
         if(output.isEmpty()){

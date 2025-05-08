@@ -15,13 +15,13 @@ public class ProductService {
         String output="";
         for (Product product : productRepository.findAll()) {
             output+="ID Product: "+product.getId()+"\n";
-            output+="Name: "+product.getName()+"\n";
-            output+="Description: "+product.getDescription()+"\n";
-            output+="Price: "+product.getPrice()+"\n";
+            output+="Nombre: "+product.getName()+"\n";
+            output+="Descripción: "+product.getDescription()+"\n";
+            output+="Precio: "+product.getPrice()+"\n";
             output+="Stock: "+product.getStock()+"\n";
         }
         if(output.isEmpty()){
-            return "No Products Found";
+            return "No se han encontrado productos";
         }else{
             return output;
         }
@@ -31,26 +31,26 @@ public class ProductService {
         if(productRepository.existsById(id)){
             Product product = productRepository.findById(id).get();
             output+="ID Product: "+product.getId()+"\n";
-            output+="Name: "+product.getName()+"\n";
-            output+="Description: "+product.getDescription()+"\n";
-            output+="Price: "+product.getPrice()+"\n";
+            output+="Nombre: "+product.getName()+"\n";
+            output+="Descripción: "+product.getDescription()+"\n";
+            output+="Precio: "+product.getPrice()+"\n";
             output+="Stock: "+product.getStock()+"\n";
             return output;
         }else{
-            return "No Product Found";
+            return "No se ha encontrado el producto";
         }
     }
     public String addProduct(Product product) {
         productRepository.save(product);
-        return "Product Added";
+        return "Product añadido";
     }
 
     public String deleteProduct(int id) {
         if(productRepository.existsById(id)){
             productRepository.deleteById(id);
-            return "Product Deleted";
+            return "Producto eliminado";
         }else{
-            return "No Product Found";
+            return "No se ha encontrado el producto";
         }
     }
 
@@ -62,9 +62,9 @@ public class ProductService {
             buscado.setPrice(product.getPrice());
             buscado.setStock(product.getStock());
             productRepository.save(buscado);
-            return "Product Updated";
+            return "Producto actualizado";
         }else{
-            return "No Product Found";
+            return "No se ha encontrado el producto";
         }
     }
 }
