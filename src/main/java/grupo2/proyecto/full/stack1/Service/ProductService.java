@@ -14,7 +14,7 @@ public class ProductService {
     public String getAllProducts() {
         String output="";
         for (Product product : productRepository.findAll()) {
-            output+="ID Product: "+product.getId()+"\n";
+            output+="ID_Product: "+product.getId()+"\n";
             output+="Nombre: "+product.getName()+"\n";
             output+="Descripción: "+product.getDescription()+"\n";
             output+="Precio: "+product.getPrice()+"\n";
