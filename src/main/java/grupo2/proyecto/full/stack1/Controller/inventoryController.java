@@ -1,10 +1,9 @@
 package grupo2.proyecto.full.stack1.Controller;
 
+import grupo2.proyecto.full.stack1.Modelo.Inventory;
 import grupo2.proyecto.full.stack1.Service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -16,9 +15,23 @@ public class inventoryController {
 
 
     @GetMapping
-    public String getAllinventory() {
+    public String getAllInventory() {
 
         return inventoryService.getAllInventory();
 
     }
+    @PostMapping
+    public String addInventory(@RequestBody Inventory inventory) {
+        return inventoryService.addProduct(inventory);
+    }
+    @DeleteMapping("/{id}")
+    public String deleteInventory(@PathVariable int id) {
+        return inventoryService.deleteProduct(id);
+
+    }
+    @PutMapping("/{id}")
+    public String updateInventory(@PathVariable int id, @RequestBody Inventory inventory) {
+        return inventoryService.updateProduct(id, inventory);
+    }
+
 }
