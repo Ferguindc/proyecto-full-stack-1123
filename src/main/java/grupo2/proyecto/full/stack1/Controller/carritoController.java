@@ -17,6 +17,12 @@ public class carritoController {
         return carritoService.getAllCarritos();
     }
 
+    @PostMapping
+    public String agregarCarrito(@RequestBody Carrito carrito) {
+        return carritoService.agregarCarrito(carrito);
+    }
+
+
     @PostMapping("/pagar")
     public String pagarPedidos(){
         return carritoService.pagarPedidos();

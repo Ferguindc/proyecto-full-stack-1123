@@ -11,6 +11,12 @@ public class carritoService {
     @Autowired
     private carritoRepository CarritoRepository;
 
+    public String agregarCarrito(Carrito carrito) {
+        CarritoRepository.save(carrito);
+        return "Carrito agregado correctamente";
+    }
+
+
     public String pagarPedidos() {
         for (Carrito carrito : CarritoRepository.findAll()) {
             if (carrito.isPagado()) {
