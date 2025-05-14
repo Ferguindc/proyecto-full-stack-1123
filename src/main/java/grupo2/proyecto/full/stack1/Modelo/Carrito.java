@@ -13,13 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
-public class Inventory {
+public class Carrito {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nombre;
-    private String componente;
-    private int stock;
-    private int valorUnitario;
-
+    private String descripcion;
+    private double total;
+    private boolean pagado;
+    private boolean cerrado;
 }
+
