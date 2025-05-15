@@ -13,22 +13,22 @@ public class inventoryController {
     @Autowired
     private InventoryService inventoryService;
 
-
     @GetMapping
     public String getAllInventory() {
-
         return inventoryService.getAllInventory();
-
     }
+
     @PostMapping
     public String addInventory(@RequestBody Inventory inventory) {
         return inventoryService.addProduct(inventory);
     }
+
     @DeleteMapping("/{id}")
     public String deleteInventory(@PathVariable int id) {
         return inventoryService.deleteProduct(id);
 
     }
+
     @PutMapping("/{id}")
     public String updateInventory(@PathVariable int id, @RequestBody Inventory inventory) {
         return inventoryService.updateProduct(id, inventory);

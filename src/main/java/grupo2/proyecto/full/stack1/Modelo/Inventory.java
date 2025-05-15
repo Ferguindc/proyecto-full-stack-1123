@@ -21,5 +21,4 @@ public class Inventory {
     private String componente;
     private int stock;
     private int valorUnitario;
-
 }

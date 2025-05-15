@@ -19,8 +19,7 @@ public class Carrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String descripcion;
-    private double total;
-    private boolean pagado;
-    private boolean cerrado;
+    private int total;
+    private String estado;
 }
 
