@@ -31,25 +31,39 @@ public class carritoService {
         }
     }
 
-    public String deletePedido(int id) {
-        if (CarritoRepository.existsById(id)) {
-            CarritoRepository.deleteById(id);
-            return "Pedido eliminado";
-        } else {
-            return "Pedido no encontrado";
+    public String getCarritoById(int id) {
+        String output="";
+        if(CarritoRepository.existsById(id)){
+            Carrito carrito = CarritoRepository.findById(id).get();
+            output+="ID del Carrito: "+carrito.getId()+"\n";
+            output+="Nombre: "+carrito.getDescripcion()+"\n";
+            output+="Descripción: "+carrito.getTotal()+"\n";
+            output+="Estado: "+carrito.getEstado()+"\n";
+            return output;
+        }else{
+            return "No se ha encontrado el carrito";
         }
     }
 
-    public String updatePedido(int id, Carrito nuevoCarrito) {
+    public String deleteCarrito(int id) {
+        if (CarritoRepository.existsById(id)) {
+            CarritoRepository.deleteById(id);
+            return "Carrito eliminado";
+        } else {
+            return "Carrito no encontrado";
+        }
+    }
+
+    public String updateCarrito(int id, Carrito nuevoCarrito) {
         if (CarritoRepository.existsById(id)) {
             Carrito buscado = CarritoRepository.findById(id).get();
             buscado.setDescripcion(nuevoCarrito.getDescripcion());
             buscado.setTotal(nuevoCarrito.getTotal());
             buscado.setEstado(nuevoCarrito.getEstado());
             CarritoRepository.save(buscado);
-            return "Pedido actualizado.";
+            return "Carrito actualizado.";
         } else {
-            return "Pedido no encontrado.";
+            return "Carrito no encontrado.";
         }
     }
 }

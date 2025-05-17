@@ -26,6 +26,7 @@ public class ProductService {
             return output;
         }
     }
+
     public String getProductById(int id) {
         String output="";
         if(productRepository.existsById(id)){
@@ -40,6 +41,7 @@ public class ProductService {
             return "No se ha encontrado el producto";
         }
     }
+
     public String addProduct(Product product) {
         productRepository.save(product);
         return "Product añadido";
