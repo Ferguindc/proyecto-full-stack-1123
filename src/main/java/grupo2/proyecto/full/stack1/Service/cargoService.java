@@ -36,7 +36,7 @@ public class cargoService {
             Cargo cargo = cargoRepository.findById(id).get();
             output+="ID Cargo: "+cargo.getId()+"\n";
             output+="Nombre: "+cargo.getNombre()+"\n";
-            output+="Descripción: "+cargo.getSalario()+"\n";
+            output+="Salario: "+cargo.getSalario()+"\n";
             return output;
         }else{
             return "No se ha encontrado el cargo";
