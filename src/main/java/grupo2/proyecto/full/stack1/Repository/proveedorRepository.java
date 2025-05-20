@@ -1,13 +1,9 @@
 package grupo2.proyecto.full.stack1.Repository;
 
-import grupo2.proyecto.full.stack1.Modelo.User;
+import grupo2.proyecto.full.stack1.Modelo.proveedor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-
+public interface proveedorRepository  extends JpaRepository<proveedor, Integer> {
 }

@@ -19,6 +19,7 @@ public class InventoryService {
             output+="componente: "+inventory.getComponente()+"\n";
             output+="stock: "+inventory.getStock()+"\n";
             output+="valor unitario: "+inventory.getValorUnitario()+"\n";
+
         }
         if(output.isEmpty()){
             return "No se han encontrado productos";

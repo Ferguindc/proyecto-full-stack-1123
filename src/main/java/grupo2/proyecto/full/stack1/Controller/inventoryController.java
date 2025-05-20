@@ -18,6 +18,12 @@ public class inventoryController {
         return inventoryService.getAllInventory();
     }
 
+    @GetMapping("/{id}")
+    public String getAllInventory(@PathVariable int id) {
+
+        return inventoryService.getInventoryId(id);
+    }
+
     @PostMapping
     public String addInventory(@RequestBody Inventory inventory) {
         return inventoryService.addProduct(inventory);
