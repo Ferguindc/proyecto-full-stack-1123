@@ -26,6 +26,7 @@ public class ClienteService {
             return output;
         }
     }
+
     public String getClienteById(int id) {
         String output = "";
         if (clienteRepository.existsById(id)) {
@@ -35,10 +36,12 @@ public class ClienteService {
             output += "email" + cliente.getEmail()+"\n";
         }
     }
+
     public String addCliente(Cliente cliente) {
         clienteRepository.save(cliente);
         return "Cliente guardado";
     }
+
     public String deleteCliente(int id) {
        if (clienteRepository.existsById(id)) {
            clienteRepository.deleteById(id);
