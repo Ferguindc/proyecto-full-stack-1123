@@ -9,21 +9,62 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     public String addUser(User user) {
-        return userRepository.addUser(user);
+        userRepository.save(user);
+        return "Usuario agregado correctamente";
     }
-    public String updateUser(User user) {
-        return userRepository.updateUser(user);
+
+    public String getAllUser() {
+        String output = "";
+        for (User user : userRepository.findAll()) {
+            output += "ID: " + user.getId() + "\n";
+            output += "Nombre: " + user.getUsername() + "\n";
+            output += "Contraseña: " + user.getPassword() + "\n\n";
+            output += "Email: " + user.getEmail() + "\n\n";
+        }
+        if (output.isEmpty()) {
+            return "Todavía no se ha agregado ningun usuario.";
+        } else {
+            return output;
+        }
     }
+
+    public String getUserById(int id) {
+        String output="";
+        if(userRepository.existsById(id)){
+            User user = userRepository.findById(id).get();
+            output += "ID: " + user.getId() + "\n";
+            output += "Nombre: " + user.getUsername() + "\n";
+            output += "Contraseña: " + user.getPassword() + "\n\n";
+            output += "Email: " + user.getEmail() + "\n\n";
+            return output;
+        }else{
+            return "No se ha encontrado el usuario";
+        }
+    }
+
     public String deleteUser(int id) {
-        return userRepository.removeUser(id);
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return "Usuario eliminado correctamente";
+        } else {
+            return "No se ha encontrado el usuario.";
+        }
     }
-    public String getUser(int id) {
-        return userRepository.getUser(id);
-    }
-    public String getAllUsers() {
-        return userRepository.getUsers();
+
+    public String updateUser(int id, User user) {
+        if (userRepository.existsById(id)) {
+            User buscado = userRepository.findById(id).get();
+            buscado.setId(user.getId());
+            buscado.setUsername(user.getUsername());
+            buscado.setPassword(user.getPassword());
+            buscado.setEmail(user.getEmail());
+            userRepository.save(buscado);
+            return "Usuario actualizado correctamente.";
+        } else {
+            return "No se ha encontrado el usuario.";
+        }
     }
 }

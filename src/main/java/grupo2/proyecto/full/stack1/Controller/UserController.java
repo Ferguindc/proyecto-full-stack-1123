@@ -13,26 +13,27 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public String getUsers(){
-        return userService.getAllUsers();
+    public String getAllUser() {
+        return userService.getAllUser();
     }
 
     @GetMapping("/{id}")
-    public String getUserById(@PathVariable int id){
-        return userService.getUser(id);
+    public String getUserById(@PathVariable int id) {
+        return userService.getUserById(id);
     }
 
-    @PostMapping
-    public String postUser(@RequestBody User user){
+    @PostMapping()
+    public String addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable int id){
+    public String deleteUser(@PathVariable int id) {
         return userService.deleteUser(id);
     }
-    @PutMapping
-    public String putUser(@RequestBody User user){
-        return userService.updateUser(user);
+
+    @PutMapping("/{id}")
+    public String updateUser(@PathVariable int id, @RequestBody User user) {
+        return userService.updateUser(id, user);
     }
 }

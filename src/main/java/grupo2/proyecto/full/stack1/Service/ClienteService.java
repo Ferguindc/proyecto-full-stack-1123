@@ -17,7 +17,7 @@ public class ClienteService {
         for (Cliente cliente : clienteRepository.findAll()) {
             output += "Cliente: " + cliente.getEstado() + "\n";
             output += "Id: " + cliente.getId() + "\n";
-            output += "lol" + cliente.getEmail()+"\n";
+            output += "Email" + cliente.getEmail()+"\n";
         }
         if(output.isEmpty()) {
             return "No se encontraron clientes";
@@ -34,6 +34,9 @@ public class ClienteService {
             output += "Cliente: " + cliente.getEstado() + "\n";
             output += "Id: " + cliente.getId() + "\n";
             output += "email" + cliente.getEmail()+"\n";
+            return output;
+        } else {
+            return "No se encontraron clientes";
         }
     }
 
