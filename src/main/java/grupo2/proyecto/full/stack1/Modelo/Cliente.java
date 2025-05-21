@@ -1,6 +1,5 @@
 package grupo2.proyecto.full.stack1.Modelo;
 
-import ch.qos.logback.core.model.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

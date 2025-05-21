@@ -44,7 +44,7 @@ public class ProductService {
 
     public String addProduct(Product product) {
         productRepository.save(product);
-        return "Product añadido";
+        return "Producto añadido";
     }
 
     public String deleteProduct(int id) {
