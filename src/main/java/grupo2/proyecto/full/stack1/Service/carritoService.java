@@ -2,6 +2,7 @@ package grupo2.proyecto.full.stack1.Service;
 
 import grupo2.proyecto.full.stack1.Modelo.Carrito;
 import grupo2.proyecto.full.stack1.Repository.carritoRepository;
+import grupo2.proyecto.full.stack1.Repository.clienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,8 @@ public class carritoService {
 
     @Autowired
     private carritoRepository CarritoRepository;
+
+
 
     public String addCarrito(Carrito carrito) {
         CarritoRepository.save(carrito);
@@ -20,9 +23,7 @@ public class carritoService {
         String output = "";
         for (Carrito carrito : CarritoRepository.findAll()) {
             output += "ID: " + carrito.getId() + "\n";
-            output += "Descripción: " + carrito.getDescripcion() + "\n";
-            output += "Total: " + carrito.getTotal() + "\n";
-            output += "Estado: " + carrito.getEstado() + "\n\n";
+
         }
         if (output.isEmpty()) {
             return "No se han encontrado carritos.";
@@ -36,9 +37,7 @@ public class carritoService {
         if(CarritoRepository.existsById(id)){
             Carrito carrito = CarritoRepository.findById(id).get();
             output+="ID del Carrito: "+carrito.getId()+"\n";
-            output+="Nombre: "+carrito.getDescripcion()+"\n";
-            output+="Descripción: "+carrito.getTotal()+"\n";
-            output+="Estado: "+carrito.getEstado()+"\n";
+
             return output;
         }else{
             return "No se ha encontrado el carrito";
@@ -57,9 +56,7 @@ public class carritoService {
     public String updateCarrito(int id, Carrito nuevoCarrito) {
         if (CarritoRepository.existsById(id)) {
             Carrito buscado = CarritoRepository.findById(id).get();
-            buscado.setDescripcion(nuevoCarrito.getDescripcion());
-            buscado.setTotal(nuevoCarrito.getTotal());
-            buscado.setEstado(nuevoCarrito.getEstado());
+
             CarritoRepository.save(buscado);
             return "Carrito actualizado.";
         } else {

@@ -60,7 +60,7 @@ public class employeeService {
 
     public String updateEmployee(int id, Employee employee) {
         if (employeeRepository.existsById(id)) {
-            Employee  buscado = employeeRepository.findById(id).get();
+            Employee buscado = employeeRepository.findById(id).get();
             buscado.setNombre(employee.getNombre());
             buscado.setApellido(employee.getApellido());
             buscado.setZipcode(employee.getZipcode());

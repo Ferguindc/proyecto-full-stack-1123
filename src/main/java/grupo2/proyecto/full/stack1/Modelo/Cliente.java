@@ -14,11 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
-public class Cliente extends User{
+public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private int id;
-    private String estado;
+    private String nombre;
+    private String apellido;
+    private String email;
+
 
 }

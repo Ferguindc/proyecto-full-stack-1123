@@ -15,9 +15,12 @@ public class ClienteService {
     public String getAllClientes() {
         String output = "";
         for (Cliente cliente : clienteRepository.findAll()) {
-            output += "Cliente: " + cliente.getEstado() + "\n";
             output += "Id: " + cliente.getId() + "\n";
-            output += "lol" + cliente.getEmail()+"\n";
+            output += "Nombre: " + cliente.getNombre() + "\n";
+            output += "Apellido: " + cliente.getApellido() + "\n";
+            output += "Email: " + cliente.getEmail() + "\n";
+
+
         }
         if(output.isEmpty()) {
             return "No se encontraron clientes";
@@ -30,10 +33,12 @@ public class ClienteService {
         String output = "";
         if (clienteRepository.existsById(id)) {
             Cliente cliente = clienteRepository.findById(id).get();
-            output += "Cliente: " + cliente.getEstado() + "\n";
             output += "Id: " + cliente.getId() + "\n";
-            output += "email" + cliente.getEmail()+"\n";
-        }
+            output += "Nombre: " + cliente.getNombre() + "\n";
+            output += "Apellido: " + cliente.getApellido() + "\n";
+            output += "Email: " + cliente.getEmail() + "\n";
+
+        }return output;
     }
     public String addCliente(Cliente cliente) {
         clienteRepository.save(cliente);
@@ -50,10 +55,10 @@ public class ClienteService {
     public String updateCliente(int id,Cliente cliente) {
         if (clienteRepository.existsById(cliente.getId())) {
             Cliente buscado = clienteRepository.findById(cliente.getId()).get();
-            buscado.setEstado(cliente.getEstado());
+            buscado.setId(cliente.getId());
+            buscado.setNombre(cliente.getNombre());
+            buscado.setApellido(cliente.getApellido());
             buscado.setEmail(cliente.getEmail());
-            buscado.setUsername(cliente.getUsername());
-            buscado.setPassword(cliente.getPassword());
             clienteRepository.save(buscado);
             return "Cliente actualizado";
 

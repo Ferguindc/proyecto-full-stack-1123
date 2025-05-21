@@ -19,7 +19,6 @@ public class detallePedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Envio idEnvio;
     private LocalDate fechaEnvio;
     private int numSerie;
     private String metodoEnvio;
