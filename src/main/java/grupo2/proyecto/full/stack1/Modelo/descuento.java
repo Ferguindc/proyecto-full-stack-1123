@@ -1,5 +1,6 @@
 package grupo2.proyecto.full.stack1.Modelo;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,15 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
-public class Cliente {
+public class descuento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nombre;
-    private String apellido;
-    private String email;
+    private String tipodDescuento;
+    private int descuento;
+    //aqui va producto para aplicarle le descuento
 
 
 }

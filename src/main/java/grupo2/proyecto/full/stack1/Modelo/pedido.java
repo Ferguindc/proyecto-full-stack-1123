@@ -5,26 +5,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
-
-public class Employee {
-
+public class pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String nombre;
-    private String apellido;
-    private int zipcode;
-    private String email;
-    private int telefono;
+    private int precioPedido;
+    private String metodoPago;
+    private int costoEnvio;
+    private LocalDate fechaEnvio;
+    private int numSerie;
+    private String metodoEnvio;
     @OneToOne
-    @JoinColumn(name = "cargo_id", nullable = false)
-    private Cargo cargo;
+    @JoinColumn(name = "descuento_id", nullable = false)
+    private descuento descuento;
+    @OneToOne
+    @JoinColumn(name = "envio_id", nullable = false)
+    private envio envio;
     @OneToOne
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
+
+
+
 }
