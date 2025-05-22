@@ -17,13 +17,16 @@ public class SucursalController {
     private SucursalService sucursalService;
 
     @GetMapping
-    public ResponseEntity<List<Sucursal>> listarSucursal() {
+    public ResponseEntity<?> listarSucursal() {
         List<Sucursal> sucursales = sucursalService.findAll();
         if (sucursales.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("No hay sucursales registradas.");
 
         }return ResponseEntity.ok(sucursales);
     }
+
     @PostMapping
     public ResponseEntity<Sucursal> guardarSucursal(@RequestBody Sucursal sucursal) {
 
