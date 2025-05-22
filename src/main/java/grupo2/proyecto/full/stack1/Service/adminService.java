@@ -19,7 +19,7 @@ public class adminService {
         String output = "";
         for(Admin admin : adminRepository.findAll()){
             output += "ID: " + admin.getId() + "\n";
-            output += "Usuario: " + admin.getNombre() + "\n";
+            output += "Usuario: " + admin.getUsuario() + "\n";
             output += "Password: " + admin.getPassword() + "\n";
             output += "Nombre: " + admin.getNombre() + "\n";
             output += "Apellido: " + admin.getApellido() + "\n";
@@ -36,7 +36,7 @@ public class adminService {
         if (adminRepository.existsById(id)) {
             Admin admin = adminRepository.findById(id).get();
             output += "ID: " + admin.getId() + "\n";
-            output += "Usuario: " + admin.getNombre() + "\n";
+            output += "Usuario: " + admin.getUsuario() + "\n";
             output += "Password: " + admin.getPassword() + "\n";
             output += "Nombre: " + admin.getNombre() + "\n";
             output += "Apellido: " + admin.getApellido() + "\n";
@@ -59,8 +59,8 @@ public class adminService {
     public String updateAdmin(int id, Admin admin) {
         if (adminRepository.existsById(id)) {
             Admin buscado = adminRepository.findById(id).get();
-            buscado.setNombre(admin.getNombre());
-            buscado.setApellido(admin.getApellido());
+            buscado.setUsuario(admin.getUsuario());
+            buscado.setPassword(admin.getPassword());
             buscado.setEmail(admin.getEmail());
             adminRepository.save(buscado);
             return "Administrador actualizado.";
