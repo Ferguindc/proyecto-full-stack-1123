@@ -1,6 +1,5 @@
 package grupo2.proyecto.full.stack1.Controller;
 
-
 import grupo2.proyecto.full.stack1.Modelo.Sucursal;
 import grupo2.proyecto.full.stack1.Service.SucursalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping({"/sucursal"})
@@ -22,52 +22,56 @@ public class SucursalController {
         if (sucursales.isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("No hay sucursales registradas.");
-
-        }return ResponseEntity.ok(sucursales);
+                    .body(Map.of("status", 404, "message", "No hay sucursales registradas."));
+        }
+        return ResponseEntity.ok(sucursales);
     }
 
     @PostMapping
-    public ResponseEntity<Sucursal> guardarSucursal(@RequestBody Sucursal sucursal) {
-
+    public ResponseEntity<?> guardarSucursal(@RequestBody Sucursal sucursal) {
         Sucursal sucursalNuevo = sucursalService.save(sucursal);
-        return new ResponseEntity<>(sucursalNuevo, HttpStatus.CREATED);
-
-
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of("status", 201, "message", "Sucursal creada exitosamente", "data", sucursalNuevo));
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Sucursal> buscarSucursalPorId(@PathVariable int id) {
-        try{
+    public ResponseEntity<?> buscarSucursalPorId(@PathVariable int id) {
+        try {
             Sucursal sucursal = sucursalService.findById(id);
             return ResponseEntity.ok(sucursal);
-
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("status", 404, "message", "Sucursal no encontrada con ID: " + id));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Sucursal> actualizarSucursal(@PathVariable int id, @RequestBody Sucursal sucursal) {
-        try{
+    public ResponseEntity<?> actualizarSucursal(@PathVariable int id, @RequestBody Sucursal sucursal) {
+        try {
             Sucursal buscado = sucursalService.findById(id);
             buscado.setId(id);
             buscado.setDireccionSucursal(sucursal.getDireccionSucursal());
             buscado.setNombreSucursal(sucursal.getNombreSucursal());
             sucursalService.save(buscado);
-            return ResponseEntity.ok(buscado);
-
+            return ResponseEntity.ok(Map.of("status", 200, "message", "Sucursal actualizada exitosamente", "data", buscado));
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("status", 404, "message", "No se pudo actualizar, sucursal no encontrada con ID: " + id));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Sucursal> eliminarSucursal(@PathVariable int id) {
-        try{
+    public ResponseEntity<?> eliminarSucursal(@PathVariable int id) {
+        try {
             sucursalService.delete(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(Map.of("status", 200, "message", "Sucursal eliminada exitosamente"));
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("status", 404, "message", "No se pudo eliminar, sucursal no encontrada con ID: " + id));
         }
     }
 }

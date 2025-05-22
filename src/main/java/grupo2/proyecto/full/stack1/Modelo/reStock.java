@@ -17,6 +17,7 @@ public class reStock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(nullable = false)
     private int stock;
     private LocalDate fechaReStock;
     @OneToOne

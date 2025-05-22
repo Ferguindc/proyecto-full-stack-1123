@@ -1,9 +1,7 @@
 package grupo2.proyecto.full.stack1.Modelo;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +12,11 @@ import lombok.NoArgsConstructor;
 @Entity
 public class envio {
     @Id
-    @GeneratedValue
-    private Long id;
-    private Long codigoEnvio;
-    private Long numeroEnvio;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(nullable = false)
+    private int codigoEnvio;
+    private int numeroEnvio;
     private String direccionEnvio;
 
 }
