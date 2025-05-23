@@ -18,7 +18,7 @@ public class CarritoController {
 
     @GetMapping
     public ResponseEntity<?> listarCarritos() {
-        List<Carrito> carritos = carritoService.findAll();
+        List<Carrito> carritos = carritoService.listarCarritos();
         if (carritos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay carritos registrados."));
@@ -55,13 +55,10 @@ public class CarritoController {
     public ResponseEntity<?> actualizarCarrito(@PathVariable int id, @RequestBody Carrito carritoActualizado) {
         try {
             Carrito existente = carritoService.findById(id);
-
             existente.setCantidad(carritoActualizado.getCantidad());
             existente.setCliente(carritoActualizado.getCliente());
-
             Carrito actualizado = carritoService.save(existente);
             return ResponseEntity.ok(actualizado);
-
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Carrito no encontrado con ID: " + id));

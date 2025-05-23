@@ -48,13 +48,21 @@ public class employeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable int id, @RequestBody Employee actualizado) {
+    public ResponseEntity<?> actualizarEmpleado(@PathVariable int id, @RequestBody Employee empleadoActualizado) {
         try {
-            Employee actualizadoFinal = employeeService.updateEmployee(id, actualizado);
-            return ResponseEntity.ok(actualizadoFinal);
+            Employee empleadoExistente = employeeService.getEmployeeById(id);
+            empleadoExistente.setNombre(empleadoActualizado.getNombre());
+            empleadoExistente.setApellido(empleadoActualizado.getApellido());
+            empleadoExistente.setZipcode(empleadoActualizado.getZipcode());
+            empleadoExistente.setEmail(empleadoActualizado.getEmail());
+            empleadoExistente.setTelefono(empleadoActualizado.getTelefono());
+            empleadoExistente.setCargo(empleadoActualizado.getCargo());
+            empleadoExistente.setSucursal(empleadoActualizado.getSucursal());
+            Employee empleadoGuardado = employeeService.addEmployee(empleadoExistente);
+            return ResponseEntity.ok(empleadoGuardado);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", "Empleado no encontrado con ID: " + id));
+                    .body(Map.of("mensaje", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo actualizar el empleado."));

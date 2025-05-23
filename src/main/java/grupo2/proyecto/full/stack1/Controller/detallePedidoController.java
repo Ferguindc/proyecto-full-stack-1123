@@ -60,7 +60,7 @@ public class detallePedidoController {
         try {
             detallePedido existente = detallePedidoService.findById(id);
 
-            // Actualizamos todos los campos del detallePedido
+
             existente.setCantidadProductos(detalleActualizado.getCantidadProductos());
             existente.setPrecioUnitario(detalleActualizado.getPrecioUnitario());
             existente.setProduct(detalleActualizado.getProduct());
@@ -81,7 +81,6 @@ public class detallePedidoController {
     }
 
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarDetalle(@PathVariable int id) {
         try {
@@ -96,6 +95,7 @@ public class detallePedidoController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "No se pudo eliminar el detalle de pedido."));
+
         }
     }
 }

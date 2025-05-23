@@ -58,13 +58,11 @@ public class ProductController {
     public ResponseEntity<?> actualizarProducto(@PathVariable int id, @RequestBody Product productoActualizado) {
         try {
             Product productoExistente = productService.findById(id);
-
             productoExistente.setName(productoActualizado.getName());
             productoExistente.setDescription(productoActualizado.getDescription());
             productoExistente.setPrice(productoActualizado.getPrice());
             productoExistente.setStock(productoActualizado.getStock());
             productoExistente.setInventario(productoActualizado.getInventario());
-
             Product productoGuardado = productService.save(productoExistente);
             return ResponseEntity.ok(productoGuardado);
         } catch (NoSuchElementException e) {

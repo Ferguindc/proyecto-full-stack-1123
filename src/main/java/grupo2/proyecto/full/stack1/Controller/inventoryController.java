@@ -53,16 +53,22 @@ public class inventoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarInventario(@PathVariable int id, @RequestBody Inventory inventory) {
+    public ResponseEntity<?> actualizarInventario(@PathVariable int id, @RequestBody Inventory inventarioActualizado) {
         try {
-            Inventory actualizado = inventoryService.updateProduct(id, inventory);
-            return ResponseEntity.ok(actualizado);
+            Inventory inventarioExistente = inventoryService.getInventoryId(id);
+            inventarioExistente.setNombre(inventarioActualizado.getNombre());
+            inventarioExistente.setComponente(inventarioActualizado.getComponente());
+            inventarioExistente.setStock(inventarioActualizado.getStock());
+            inventarioExistente.setValorUnitario(inventarioActualizado.getValorUnitario());
+            Inventory inventarioGuardado = inventoryService.addProduct(inventarioExistente);
+            return ResponseEntity.ok(inventarioGuardado);
+
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", "No se encontró el producto con ID: " + id));
+                    .body(Map.of("mensaje", "Inventario no encontrado con ID: " + id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "No se pudo actualizar el producto."));
+                    .body(Map.of("error", "No se pudo actualizar el inventario."));
         }
     }
 
