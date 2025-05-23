@@ -3,39 +3,75 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.Employee;
 import grupo2.proyecto.full.stack1.Service.employeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/empleado")
-
 public class employeeController {
 
-
     @Autowired
-    private employeeService EmployeeService;
+    private employeeService employeeService;
 
     @GetMapping
-    public String getAllEmployee() {
-        return EmployeeService.getAllEmployee();
+    public ResponseEntity<?> getAllEmployee() {
+        List<Employee> empleados = employeeService.getAllEmployee();
+        if (empleados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "No hay empleados registrados."));
+        }
+        return ResponseEntity.ok(empleados);
     }
 
     @GetMapping("/{id}")
-    public String getEmployeeById(@PathVariable int id) {
-        return EmployeeService.getEmployeeById(id);
+    public ResponseEntity<?> getEmployeeById(@PathVariable int id) {
+        try {
+            Employee empleado = employeeService.getEmployeeById(id);
+            return ResponseEntity.ok(empleado);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "Empleado no encontrado con ID: " + id));
+        }
     }
 
-    @PostMapping()
-    public String addEmployee(@RequestBody Employee employee) {
-        return EmployeeService.addEmployee(employee);
-    }
-
-    @DeleteMapping("/{id}")
-    public String deleteEmployee(@PathVariable int id) {
-        return EmployeeService.deleteEmployee(id);
+    @PostMapping
+    public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
+        try {
+            Employee nuevo = employeeService.addEmployee(employee);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "No se pudo crear el empleado."));
+        }
     }
 
     @PutMapping("/{id}")
-    public String updateEmployee(@PathVariable int id, @RequestBody Employee employee) {
-        return EmployeeService.updateEmployee(id, employee);
+    public ResponseEntity<?> updateEmployee(@PathVariable int id, @RequestBody Employee actualizado) {
+        try {
+            Employee actualizadoFinal = employeeService.updateEmployee(id, actualizado);
+            return ResponseEntity.ok(actualizadoFinal);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "Empleado no encontrado con ID: " + id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "No se pudo actualizar el empleado."));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEmployee(@PathVariable int id) {
+        try {
+            employeeService.deleteEmployee(id);
+            return ResponseEntity.ok(Map.of("mensaje", "Empleado eliminado correctamente."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "Empleado no encontrado con ID: " + id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "No se pudo eliminar el empleado."));
+        }
     }
 }
