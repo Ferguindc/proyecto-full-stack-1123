@@ -15,7 +15,6 @@ public class PedidoController {
     @Autowired
     private PedidoService pedidoService;
 
-
     @GetMapping
     public ResponseEntity<?> listarPedidos() {
         List<pedido> pedidos = pedidoService.findAll();
@@ -26,7 +25,6 @@ public class PedidoController {
         }
         return ResponseEntity.ok(pedidos);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPedido(@PathVariable int id) {
@@ -39,7 +37,6 @@ public class PedidoController {
                     .body(Map.of("mensaje", "No se encontró el pedido con ID: " + id));
         }
     }
-
 
     @PostMapping
     public ResponseEntity<?> crearPedido(@RequestBody pedido nuevoPedido) {
@@ -55,12 +52,10 @@ public class PedidoController {
         }
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPedido(@PathVariable int id, @RequestBody pedido pedidoActualizado) {
         try {
             pedido pedidoExistente = pedidoService.findById(id);
-
 
             pedidoExistente.setPrecioPedido(pedidoActualizado.getPrecioPedido());
             pedidoExistente.setMetodoPago(pedidoActualizado.getMetodoPago());
@@ -85,7 +80,6 @@ public class PedidoController {
                     .body(Map.of("error", "No se pudo actualizar el pedido."));
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarPedido(@PathVariable int id) {
