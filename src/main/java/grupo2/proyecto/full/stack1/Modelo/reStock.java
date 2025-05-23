@@ -20,13 +20,13 @@ public class reStock {
     @Column(nullable = false)
     private int stock;
     private LocalDate fechaReStock;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Inventory inventario;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "proveedor_id", nullable = false)
     private proveedor proveedor;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
 

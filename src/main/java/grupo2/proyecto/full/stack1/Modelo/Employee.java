@@ -22,10 +22,10 @@ public class Employee {
     private int zipcode;
     private String email;
     private int telefono;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "cargo_id", nullable = false)
     private Cargo cargo;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
 }

@@ -25,7 +25,7 @@ public class detallePedido {
     @JoinColumn(name = "pedido_id", nullable = false)
     private pedido pedido;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "carrito_id", nullable = false)
     private Carrito carrito;
 

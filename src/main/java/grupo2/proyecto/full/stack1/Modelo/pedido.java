@@ -22,13 +22,13 @@ public class pedido {
     private LocalDate fechaEnvio;
     private int numSerie;
     private String metodoEnvio;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "descuento_id", nullable = false)
     private descuento descuento;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "envio_id", nullable = false)
     private envio envio;
-    @OneToOne
+        @ManyToOne
     @JoinColumn(name = "sucursal_id", nullable = false)
     private Sucursal sucursal;
 
