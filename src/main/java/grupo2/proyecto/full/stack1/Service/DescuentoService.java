@@ -23,10 +23,12 @@ public class DescuentoService {
     public descuento findById(int id){
         return descuentoRepository.findById(id).get();
     }
+
     public descuento save(descuento descuento) {
         return descuentoRepository.save(descuento);
     }
     public void delete(int id) {
+
         descuentoRepository.deleteById(id);
     }
 

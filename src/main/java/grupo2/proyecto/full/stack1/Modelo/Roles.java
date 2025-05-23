@@ -1,5 +1,6 @@
 package grupo2.proyecto.full.stack1.Modelo;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,14 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
-public class Inventory {
+public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
-    private String nombre;
-    private String componente;
-    private int stock;
-    private int valorUnitario;
+    private String role;
+    @OneToMany
+    @JoinColumn(name="id_Cliente",nullable = false)
+    private Cliente clientes;
 
 }

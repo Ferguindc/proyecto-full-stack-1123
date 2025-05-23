@@ -18,10 +18,10 @@ public class detallePedido {
     private int cantidadProductos;
     private int precioUnitario;
     private Long precioTotal;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
     private pedido pedido;
 
