@@ -36,7 +36,7 @@ public class CargoController {
         }
     }
 
-    // POST: crear nuevo cargo
+
     @PostMapping
     public ResponseEntity<?> crearCargo(@RequestBody Cargo nuevoCargo) {
         try {
