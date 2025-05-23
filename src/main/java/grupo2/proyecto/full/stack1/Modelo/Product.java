@@ -18,7 +18,6 @@ public class Product {
     private String name;
     private String description;
     private double price;
-    private int stock;
     @OneToOne
     @JoinColumn(name = "inventario_id", nullable = false)
     private Inventory inventario;

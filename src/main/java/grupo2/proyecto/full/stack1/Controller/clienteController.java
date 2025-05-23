@@ -51,11 +51,10 @@ public class clienteController {
     public ResponseEntity<?> actualizarCliente(@PathVariable int id, @RequestBody Cliente clienteActualizado) {
         try {
             Cliente existente = clienteService.findById(id);
-
             existente.setNombre(clienteActualizado.getNombre());
             existente.setApellido(clienteActualizado.getApellido());
             existente.setEmail(clienteActualizado.getEmail());
-
+            existente.setRol(clienteActualizado.getRol());
             Cliente actualizado = clienteService.save(existente);
             return ResponseEntity.ok(actualizado);
         } catch (NoSuchElementException e) {

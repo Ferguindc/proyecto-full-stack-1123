@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/inventory")
+@RequestMapping("/inventario")
 public class inventoryController {
 
     @Autowired
@@ -56,10 +56,7 @@ public class inventoryController {
     public ResponseEntity<?> actualizarInventario(@PathVariable int id, @RequestBody Inventory inventarioActualizado) {
         try {
             Inventory inventarioExistente = inventoryService.getInventoryId(id);
-            inventarioExistente.setNombre(inventarioActualizado.getNombre());
-            inventarioExistente.setComponente(inventarioActualizado.getComponente());
             inventarioExistente.setStock(inventarioActualizado.getStock());
-            inventarioExistente.setValorUnitario(inventarioActualizado.getValorUnitario());
             Inventory inventarioGuardado = inventoryService.addProduct(inventarioExistente);
             return ResponseEntity.ok(inventarioGuardado);
 

@@ -17,7 +17,6 @@ public class Carrito {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private int cantidad;
     @OneToOne
     @JoinColumn(name = "cliente_id")

@@ -55,7 +55,6 @@ public class CarritoController {
     public ResponseEntity<?> actualizarCarrito(@PathVariable int id, @RequestBody Carrito carritoActualizado) {
         try {
             Carrito existente = carritoService.findById(id);
-            existente.setCantidad(carritoActualizado.getCantidad());
             existente.setCliente(carritoActualizado.getCliente());
             Carrito actualizado = carritoService.save(existente);
             return ResponseEntity.ok(actualizado);
