@@ -19,7 +19,7 @@ public class descuento {
     private int id;
     private String tipodDescuento;
     private int descuento;
-    //aqui va producto para aplicarle le descuento
+
 
 
 }
