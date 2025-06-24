@@ -2,6 +2,8 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.envio;
 import grupo2.proyecto.full.stack1.Service.EnvioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +12,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/envio")
+@Tag(name = "Envíos", description = "Operaciones relacionadas con el envío de productos")
 public class EnvioController {
 
     @Autowired
     private EnvioService envioService;
 
     @GetMapping
+    @Operation(summary = "Listar envíos", description = "Obtiene todos los registros de envíos disponibles")
     public ResponseEntity<?> listarEnvio() {
         List<envio> envios = envioService.findAll();
         if (envios.isEmpty()) {
@@ -26,6 +30,7 @@ public class EnvioController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear envío", description = "Registra un nuevo envío")
     public ResponseEntity<?> guardarEnvio(@RequestBody envio envio) {
         try {
             envio nuevo = envioService.save(envio);
@@ -37,6 +42,7 @@ public class EnvioController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener envío por ID", description = "Obtiene un envío específico a partir de su ID")
     public ResponseEntity<?> obtenerEnvio(@PathVariable int id) {
         try {
             envio encontrado = envioService.findById(id);
@@ -48,6 +54,7 @@ public class EnvioController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar envío", description = "Actualiza los datos de un envío existente")
     public ResponseEntity<?> actualizarEnvio(@PathVariable int id, @RequestBody envio envio) {
         try {
             envio existente = envioService.findById(id);
@@ -67,6 +74,7 @@ public class EnvioController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar envío", description = "Elimina un envío mediante su ID")
     public ResponseEntity<?> eliminarEnvio(@PathVariable int id) {
         try {
             envioService.delete(id);
@@ -77,7 +85,6 @@ public class EnvioController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "No se pudo eliminar el envío."));
-
         }
     }
 }

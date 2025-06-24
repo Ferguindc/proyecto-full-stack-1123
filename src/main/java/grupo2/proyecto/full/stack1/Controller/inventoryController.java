@@ -2,6 +2,8 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Inventory;
 import grupo2.proyecto.full.stack1.Service.InventoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +12,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/inventario")
+@Tag(name = "Inventario", description = "Gestión de stock y productos en inventario")
 public class inventoryController {
 
     @Autowired
     private InventoryService inventoryService;
 
     @GetMapping
+    @Operation(summary = "Listar inventario", description = "Obtiene todos los productos del inventario")
     public ResponseEntity<?> listarInventario() {
         try {
             List<Inventory> inventario = inventoryService.getAllInventory();
@@ -31,6 +35,7 @@ public class inventoryController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener producto por ID", description = "Obtiene un producto del inventario mediante su ID")
     public ResponseEntity<?> obtenerInventario(@PathVariable int id) {
         try {
             Inventory item = inventoryService.getInventoryId(id);
@@ -42,6 +47,7 @@ public class inventoryController {
     }
 
     @PostMapping
+    @Operation(summary = "Agregar producto al inventario", description = "Agrega un nuevo producto al inventario")
     public ResponseEntity<?> agregarInventario(@RequestBody Inventory inventory) {
         try {
             Inventory nuevo = inventoryService.addProduct(inventory);
@@ -53,13 +59,13 @@ public class inventoryController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar inventario", description = "Actualiza el stock de un producto existente")
     public ResponseEntity<?> actualizarInventario(@PathVariable int id, @RequestBody Inventory inventarioActualizado) {
         try {
             Inventory inventarioExistente = inventoryService.getInventoryId(id);
             inventarioExistente.setStock(inventarioActualizado.getStock());
             Inventory inventarioGuardado = inventoryService.addProduct(inventarioExistente);
             return ResponseEntity.ok(inventarioGuardado);
-
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Inventario no encontrado con ID: " + id));
@@ -70,6 +76,7 @@ public class inventoryController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar producto", description = "Elimina un producto del inventario mediante su ID")
     public ResponseEntity<?> eliminarInventario(@PathVariable int id) {
         try {
             inventoryService.deleteProduct(id);

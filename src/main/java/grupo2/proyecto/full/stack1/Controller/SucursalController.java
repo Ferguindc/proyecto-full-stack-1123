@@ -2,21 +2,25 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Sucursal;
 import grupo2.proyecto.full.stack1.Service.SucursalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping({"/sucursal"})
+@RequestMapping("/sucursal")
+@Tag(name = "Sucursales", description = "Administración de sucursales")
 public class SucursalController {
+
     @Autowired
     private SucursalService sucursalService;
 
     @GetMapping
+    @Operation(summary = "Listar sucursales", description = "Muestra todas las sucursales registradas")
     public ResponseEntity<?> listarSucursal() {
         List<Sucursal> sucursales = sucursalService.findAll();
         if (sucursales.isEmpty()) {
@@ -28,6 +32,7 @@ public class SucursalController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear sucursal", description = "Registra una nueva sucursal")
     public ResponseEntity<?> guardarSucursal(@RequestBody Sucursal sucursal) {
         Sucursal sucursalNuevo = sucursalService.save(sucursal);
         return ResponseEntity
@@ -36,6 +41,7 @@ public class SucursalController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar sucursal por ID", description = "Obtiene los datos de una sucursal específica")
     public ResponseEntity<?> buscarSucursalPorId(@PathVariable int id) {
         try {
             Sucursal sucursal = sucursalService.findById(id);
@@ -48,6 +54,7 @@ public class SucursalController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar sucursal", description = "Modifica la información de una sucursal existente")
     public ResponseEntity<?> actualizarSucursal(@PathVariable int id, @RequestBody Sucursal sucursal) {
         try {
             Sucursal buscado = sucursalService.findById(id);
@@ -64,6 +71,7 @@ public class SucursalController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar sucursal", description = "Elimina una sucursal del sistema")
     public ResponseEntity<?> eliminarSucursal(@PathVariable int id) {
         try {
             sucursalService.delete(id);

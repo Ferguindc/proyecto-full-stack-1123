@@ -2,6 +2,8 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.descuento;
 import grupo2.proyecto.full.stack1.Service.DescuentoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +12,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/descuento")
+@Tag(name = "Descuentos", description = "Operaciones relacionadas con descuentos aplicables a pedidos o productos")
 public class DescuentoController {
 
     @Autowired
     private DescuentoService descuentoService;
 
     @GetMapping
+    @Operation(summary = "Listar todos los descuentos", description = "Obtiene una lista de todos los descuentos registrados en el sistema.")
     public ResponseEntity<?> listarDescuentos() {
         List<descuento> descuentos = descuentoService.findAll();
         if (descuentos.isEmpty()) {
@@ -26,6 +30,7 @@ public class DescuentoController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener descuento por ID", description = "Retorna la información de un descuento específico utilizando su ID.")
     public ResponseEntity<?> obtenerDescuento(@PathVariable int id) {
         try {
             descuento d = descuentoService.findById(id);
@@ -37,6 +42,7 @@ public class DescuentoController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear un nuevo descuento", description = "Registra un nuevo descuento en el sistema con los datos proporcionados.")
     public ResponseEntity<?> crearDescuento(@RequestBody descuento nuevoDescuento) {
         try {
             descuento descuentoGuardado = descuentoService.save(nuevoDescuento);
@@ -49,6 +55,7 @@ public class DescuentoController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un descuento", description = "Actualiza la información de un descuento existente con el ID proporcionado.")
     public ResponseEntity<?> actualizarDescuento(@PathVariable int id, @RequestBody descuento descuentoActualizado) {
         try {
             descuento descuentoExistente = descuentoService.findById(id);
@@ -69,6 +76,7 @@ public class DescuentoController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un descuento", description = "Elimina un descuento existente del sistema utilizando su ID.")
     public ResponseEntity<?> eliminarDescuento(@PathVariable int id) {
         try {
             descuentoService.delete(id);

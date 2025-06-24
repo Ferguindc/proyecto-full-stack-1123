@@ -2,6 +2,8 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Employee;
 import grupo2.proyecto.full.stack1.Service.employeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +12,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/empleado")
+@Tag(name = "Empleados", description = "Gestión de empleados dentro del sistema")
 public class employeeController {
 
     @Autowired
     private employeeService employeeService;
 
     @GetMapping
+    @Operation(summary = "Listar todos los empleados", description = "Obtiene una lista con todos los empleados registrados en el sistema.")
     public ResponseEntity<?> getAllEmployee() {
         List<Employee> empleados = employeeService.getAllEmployee();
         if (empleados.isEmpty()) {
@@ -26,6 +30,7 @@ public class employeeController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener empleado por ID", description = "Obtiene la información de un empleado específico a partir de su ID.")
     public ResponseEntity<?> getEmployeeById(@PathVariable int id) {
         try {
             Employee empleado = employeeService.getEmployeeById(id);
@@ -37,6 +42,7 @@ public class employeeController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear un nuevo empleado", description = "Registra un nuevo empleado en el sistema.")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
         try {
             Employee nuevo = employeeService.addEmployee(employee);
@@ -48,6 +54,7 @@ public class employeeController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un empleado", description = "Modifica los datos de un empleado existente según su ID.")
     public ResponseEntity<?> actualizarEmpleado(@PathVariable int id, @RequestBody Employee empleadoActualizado) {
         try {
             Employee empleadoExistente = employeeService.getEmployeeById(id);
@@ -58,6 +65,7 @@ public class employeeController {
             empleadoExistente.setTelefono(empleadoActualizado.getTelefono());
             empleadoExistente.setCargo(empleadoActualizado.getCargo());
             empleadoExistente.setSucursal(empleadoActualizado.getSucursal());
+
             Employee empleadoGuardado = employeeService.addEmployee(empleadoExistente);
             return ResponseEntity.ok(empleadoGuardado);
         } catch (NoSuchElementException e) {
@@ -70,6 +78,7 @@ public class employeeController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un empleado", description = "Elimina un empleado del sistema a partir de su ID.")
     public ResponseEntity<?> deleteEmployee(@PathVariable int id) {
         try {
             employeeService.deleteEmployee(id);

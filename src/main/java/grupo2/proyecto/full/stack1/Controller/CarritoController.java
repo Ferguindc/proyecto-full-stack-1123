@@ -4,12 +4,15 @@ import grupo2.proyecto.full.stack1.Modelo.Carrito;
 import grupo2.proyecto.full.stack1.Service.carritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/carrito")
+@Tag(name = "Carro de compras", description = "Carrito relacionado con las compras")
 public class CarritoController {
 
     @Autowired
@@ -17,6 +20,7 @@ public class CarritoController {
 
 
     @GetMapping
+    @Operation(summary = " Obtener todos los Carros", description = "obtiene una lista de todos Carritos de compra")
     public ResponseEntity<?> listarCarritos() {
         List<Carrito> carritos = carritoService.listarCarritos();
         if (carritos.isEmpty()) {
@@ -28,6 +32,7 @@ public class CarritoController {
 
 
     @GetMapping("/{id}")
+    @Operation(summary = " Obtener carrito por id", description = "obtiene una lista de los carritos por ID")
     public ResponseEntity<?> obtenerCarrito(@PathVariable int id) {
         try {
             Carrito carrito = carritoService.findById(id);
@@ -40,6 +45,7 @@ public class CarritoController {
 
 
     @PostMapping
+    @Operation(summary = " Publicar un carrito ", description = "Publicar un carrito nuevo")
     public ResponseEntity<?> crearCarrito(@RequestBody Carrito nuevoCarrito) {
         try {
             Carrito guardado = carritoService.save(nuevoCarrito);
@@ -52,6 +58,7 @@ public class CarritoController {
 
 
     @PutMapping("/{id}")
+    @Operation(summary = " Editar un carrito", description = "Editar un carrito por Id")
     public ResponseEntity<?> actualizarCarrito(@PathVariable int id, @RequestBody Carrito carritoActualizado) {
         try {
             Carrito existente = carritoService.findById(id);
@@ -69,6 +76,7 @@ public class CarritoController {
 
 
     @DeleteMapping("/{id}")
+    @Operation(summary = " Borrar un carrito", description = "Borrar un carrito por Id")
     public ResponseEntity<?> eliminarCarrito(@PathVariable int id) {
         try {
             carritoService.findById(id); // Validar existencia

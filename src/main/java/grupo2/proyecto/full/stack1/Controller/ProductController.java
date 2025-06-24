@@ -2,59 +2,59 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Product;
 import grupo2.proyecto.full.stack1.Service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/producto")
+@Tag(name = "Productos", description = "Gestión de productos disponibles en la tienda")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
     @GetMapping
+    @Operation(summary = "Listar productos", description = "Obtiene una lista de todos los productos registrados")
     public ResponseEntity<?> listarProductos() {
         List<Product> productos = productService.findAll();
         if (productos.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay productos registrados."));
         }
         return ResponseEntity.ok(productos);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener producto por ID", description = "Obtiene la información de un producto mediante su ID")
     public ResponseEntity<?> obtenerProducto(@PathVariable int id) {
         try {
             Product producto = productService.findById(id);
             return ResponseEntity.ok(producto);
         } catch (NoSuchElementException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No se encontró el producto con ID: " + id));
         }
     }
 
     @PostMapping
+    @Operation(summary = "Crear producto", description = "Registra un nuevo producto")
     public ResponseEntity<?> crearProducto(@RequestBody Product nuevoProducto) {
         try {
             Product productoGuardado = productService.save(nuevoProducto);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(productoGuardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el producto."));
         }
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar producto", description = "Actualiza la información de un producto existente")
     public ResponseEntity<?> actualizarProducto(@PathVariable int id, @RequestBody Product productoActualizado) {
         try {
             Product productoExistente = productService.findById(id);
@@ -62,33 +62,30 @@ public class ProductController {
             productoExistente.setDescription(productoActualizado.getDescription());
             productoExistente.setPrice(productoActualizado.getPrice());
             productoExistente.setInventario(productoActualizado.getInventario());
+
             Product productoGuardado = productService.save(productoExistente);
             return ResponseEntity.ok(productoGuardado);
         } catch (NoSuchElementException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Producto no encontrado con ID: " + id));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo actualizar el producto."));
         }
     }
 
-
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar producto", description = "Elimina un producto mediante su ID")
     public ResponseEntity<?> eliminarProducto(@PathVariable int id) {
         try {
-            productService.findById(id); // Validar que existe
+            productService.findById(id);
             productService.delete(id);
             return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado correctamente."));
         } catch (NoSuchElementException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No se encontró el producto con ID: " + id));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "No se pudo eliminar el producto."));
         }
     }

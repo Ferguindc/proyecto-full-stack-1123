@@ -2,6 +2,8 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Cargo;
 import grupo2.proyecto.full.stack1.Service.cargoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +12,14 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/cargo")
+@Tag(name = "Cargos", description = "Cargos relacionados con Empleados")
 public class CargoController {
 
     @Autowired
     private cargoService cargoService;
 
     @GetMapping
+    @Operation(summary = " Obtener todos los cargos", description = "obtiene una lista de todos l0s largos")
     public ResponseEntity<?> listarCargos() {
         List<Cargo> cargos = cargoService.findAll();
         if (cargos.isEmpty()) {
@@ -26,6 +30,7 @@ public class CargoController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = " Obtener cargo por id", description = "Obtiene todos los cargos por ID")
     public ResponseEntity<?> obtenerCargo(@PathVariable int id) {
         try {
             Cargo cargo = cargoService.findById(id);
@@ -38,6 +43,7 @@ public class CargoController {
 
 
     @PostMapping
+    @Operation(summary = " Publica un Cargo", description = "Publica un cargo nuevo")
     public ResponseEntity<?> crearCargo(@RequestBody Cargo nuevoCargo) {
         try {
             Cargo guardado = cargoService.save(nuevoCargo);
@@ -49,6 +55,7 @@ public class CargoController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = " Edita un Cargo", description = "Edita los Cargos existentes")
     public ResponseEntity<?> actualizarCargo(@PathVariable int id, @RequestBody Cargo cargoActualizado) {
         try {
             Cargo existente = cargoService.findById(id);
@@ -70,6 +77,7 @@ public class CargoController {
 
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Borra un Cargo", description = "Borra los Cargos existentes")
     public ResponseEntity<?> eliminarCargo(@PathVariable int id) {
         try {
             Cargo existente = cargoService.findById(id);
