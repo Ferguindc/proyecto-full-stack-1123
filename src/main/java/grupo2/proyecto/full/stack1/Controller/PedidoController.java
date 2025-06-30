@@ -3,6 +3,8 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.pedido;
 import grupo2.proyecto.full.stack1.Service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +21,14 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    @Operation(summary = "Listar pedidos", description = "Obtiene todos los pedidos registrados")
+    @Operation(
+            summary = "Listar pedidos",
+            description = "Obtiene todos los pedidos registrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pedidos encontrados"),
+                    @ApiResponse(responseCode = "404", description = "No hay pedidos registrados", content = @Content)
+            }
+    )
     public ResponseEntity<?> listarPedidos() {
         List<pedido> pedidos = pedidoService.findAll();
         if (pedidos.isEmpty()) {
@@ -30,7 +39,14 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener pedido por ID", description = "Obtiene los detalles de un pedido mediante su ID")
+    @Operation(
+            summary = "Obtener pedido por ID",
+            description = "Obtiene los detalles de un pedido mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pedido encontrado"),
+                    @ApiResponse(responseCode = "404", description = "Pedido no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> obtenerPedido(@PathVariable int id) {
         try {
             pedido p = pedidoService.findById(id);
@@ -42,7 +58,14 @@ public class PedidoController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear pedido", description = "Registra un nuevo pedido")
+    @Operation(
+            summary = "Crear pedido",
+            description = "Registra un nuevo pedido",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Pedido creado"),
+                    @ApiResponse(responseCode = "400", description = "Error al crear", content = @Content)
+            }
+    )
     public ResponseEntity<?> crearPedido(@RequestBody pedido nuevoPedido) {
         try {
             pedido pedidoGuardado = pedidoService.save(nuevoPedido);
@@ -54,7 +77,15 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar pedido", description = "Actualiza los datos de un pedido existente")
+    @Operation(
+            summary = "Actualizar pedido",
+            description = "Actualiza los datos de un pedido existente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pedido actualizado"),
+                    @ApiResponse(responseCode = "404", description = "Pedido no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Error en la actualización", content = @Content)
+            }
+    )
     public ResponseEntity<?> actualizarPedido(@PathVariable int id, @RequestBody pedido pedidoActualizado) {
         try {
             pedido pedidoExistente = pedidoService.findById(id);
@@ -80,7 +111,15 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar pedido", description = "Elimina un pedido mediante su ID")
+    @Operation(
+            summary = "Eliminar pedido",
+            description = "Elimina un pedido mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pedido eliminado"),
+                    @ApiResponse(responseCode = "404", description = "Pedido no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error al eliminar", content = @Content)
+            }
+    )
     public ResponseEntity<?> eliminarPedido(@PathVariable int id) {
         try {
             pedido pedidoExistente = pedidoService.findById(id);

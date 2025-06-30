@@ -24,8 +24,7 @@ public class SucursalController {
     public ResponseEntity<?> listarSucursal() {
         List<Sucursal> sucursales = sucursalService.findAll();
         if (sucursales.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("status", 404, "message", "No hay sucursales registradas."));
         }
         return ResponseEntity.ok(sucursales);
@@ -34,10 +33,9 @@ public class SucursalController {
     @PostMapping
     @Operation(summary = "Crear sucursal", description = "Registra una nueva sucursal")
     public ResponseEntity<?> guardarSucursal(@RequestBody Sucursal sucursal) {
-        Sucursal sucursalNuevo = sucursalService.save(sucursal);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(Map.of("status", 201, "message", "Sucursal creada exitosamente", "data", sucursalNuevo));
+        Sucursal sucursalNueva = sucursalService.save(sucursal);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("status", 201, "message", "Sucursal creada exitosamente", "data", sucursalNueva));
     }
 
     @GetMapping("/{id}")
@@ -47,8 +45,7 @@ public class SucursalController {
             Sucursal sucursal = sucursalService.findById(id);
             return ResponseEntity.ok(sucursal);
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("status", 404, "message", "Sucursal no encontrada con ID: " + id));
         }
     }
@@ -57,15 +54,13 @@ public class SucursalController {
     @Operation(summary = "Actualizar sucursal", description = "Modifica la información de una sucursal existente")
     public ResponseEntity<?> actualizarSucursal(@PathVariable int id, @RequestBody Sucursal sucursal) {
         try {
-            Sucursal buscado = sucursalService.findById(id);
-            buscado.setId(id);
-            buscado.setDireccionSucursal(sucursal.getDireccionSucursal());
-            buscado.setNombreSucursal(sucursal.getNombreSucursal());
-            sucursalService.save(buscado);
-            return ResponseEntity.ok(Map.of("status", 200, "message", "Sucursal actualizada exitosamente", "data", buscado));
+            Sucursal buscada = sucursalService.findById(id);
+            buscada.setDireccionSucursal(sucursal.getDireccionSucursal());
+            buscada.setNombreSucursal(sucursal.getNombreSucursal());
+            sucursalService.save(buscada);
+            return ResponseEntity.ok(Map.of("status", 200, "message", "Sucursal actualizada exitosamente", "data", buscada));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("status", 404, "message", "No se pudo actualizar, sucursal no encontrada con ID: " + id));
         }
     }
@@ -77,8 +72,7 @@ public class SucursalController {
             sucursalService.delete(id);
             return ResponseEntity.ok(Map.of("status", 200, "message", "Sucursal eliminada exitosamente"));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("status", 404, "message", "No se pudo eliminar, sucursal no encontrada con ID: " + id));
         }
     }

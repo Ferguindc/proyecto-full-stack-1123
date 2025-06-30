@@ -3,6 +3,8 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.envio;
 import grupo2.proyecto.full.stack1.Service.EnvioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +21,14 @@ public class EnvioController {
     private EnvioService envioService;
 
     @GetMapping
-    @Operation(summary = "Listar envíos", description = "Obtiene todos los registros de envíos disponibles")
+    @Operation(
+            summary = "Listar envíos",
+            description = "Obtiene todos los registros de envíos disponibles",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de envíos obtenida exitosamente"),
+                    @ApiResponse(responseCode = "404", description = "No hay registros de envíos", content = @Content)
+            }
+    )
     public ResponseEntity<?> listarEnvio() {
         List<envio> envios = envioService.findAll();
         if (envios.isEmpty()) {
@@ -29,20 +38,15 @@ public class EnvioController {
         return ResponseEntity.ok(envios);
     }
 
-    @PostMapping
-    @Operation(summary = "Crear envío", description = "Registra un nuevo envío")
-    public ResponseEntity<?> guardarEnvio(@RequestBody envio envio) {
-        try {
-            envio nuevo = envioService.save(envio);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "No se pudo guardar el envío."));
-        }
-    }
-
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener envío por ID", description = "Obtiene un envío específico a partir de su ID")
+    @Operation(
+            summary = "Obtener envío por ID",
+            description = "Obtiene un envío específico a partir de su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Envío encontrado"),
+                    @ApiResponse(responseCode = "404", description = "Envío no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> obtenerEnvio(@PathVariable int id) {
         try {
             envio encontrado = envioService.findById(id);
@@ -53,8 +57,35 @@ public class EnvioController {
         }
     }
 
+    @PostMapping
+    @Operation(
+            summary = "Crear envío",
+            description = "Registra un nuevo envío",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Envío creado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Error al crear el envío", content = @Content)
+            }
+    )
+    public ResponseEntity<?> guardarEnvio(@RequestBody envio envio) {
+        try {
+            envio nuevo = envioService.save(envio);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "No se pudo guardar el envío."));
+        }
+    }
+
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar envío", description = "Actualiza los datos de un envío existente")
+    @Operation(
+            summary = "Actualizar envío",
+            description = "Actualiza los datos de un envío existente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Envío actualizado correctamente"),
+                    @ApiResponse(responseCode = "404", description = "Envío no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Error al actualizar el envío", content = @Content)
+            }
+    )
     public ResponseEntity<?> actualizarEnvio(@PathVariable int id, @RequestBody envio envio) {
         try {
             envio existente = envioService.findById(id);
@@ -74,7 +105,15 @@ public class EnvioController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar envío", description = "Elimina un envío mediante su ID")
+    @Operation(
+            summary = "Eliminar envío",
+            description = "Elimina un envío mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Envío eliminado correctamente"),
+                    @ApiResponse(responseCode = "404", description = "Envío no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error al eliminar el envío", content = @Content)
+            }
+    )
     public ResponseEntity<?> eliminarEnvio(@PathVariable int id) {
         try {
             envioService.delete(id);

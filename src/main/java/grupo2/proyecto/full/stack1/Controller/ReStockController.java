@@ -20,7 +20,7 @@ public class ReStockController {
 
     @GetMapping
     @Operation(summary = "Listar registros de reabastecimiento", description = "Muestra todos los registros de reStock")
-    public ResponseEntity<List<reStock>> listarrestock() {
+    public ResponseEntity<List<reStock>> listarRestock() {
         List<reStock> reStocks = reStockService.findAll();
         if (reStocks.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -30,7 +30,7 @@ public class ReStockController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar reStock por ID", description = "Busca un registro de reStock por su ID")
-    public ResponseEntity<reStock> buscarrestock(@PathVariable int id) {
+    public ResponseEntity<reStock> buscarRestock(@PathVariable int id) {
         try {
             reStock restock = reStockService.findById(id);
             return ResponseEntity.ok(restock);
@@ -41,7 +41,7 @@ public class ReStockController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar reStock", description = "Actualiza la información de un reStock existente")
-    public ResponseEntity<reStock> actualizarCarrito(@PathVariable int id, @RequestBody reStock reStock) {
+    public ResponseEntity<reStock> actualizarRestock(@PathVariable int id, @RequestBody reStock reStock) {
         try {
             reStock buscado = reStockService.findById(id);
             buscado.setStock(reStock.getStock());
@@ -55,7 +55,7 @@ public class ReStockController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar reStock", description = "Elimina un registro de reStock por su ID")
-    public ResponseEntity<reStock> eliminar(@PathVariable int id) {
+    public ResponseEntity<Void> eliminar(@PathVariable int id) {
         try {
             reStockService.delete(id);
             return ResponseEntity.ok().build();

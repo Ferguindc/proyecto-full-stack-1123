@@ -3,6 +3,8 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.Inventory;
 import grupo2.proyecto.full.stack1.Service.InventoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +21,15 @@ public class inventoryController {
     private InventoryService inventoryService;
 
     @GetMapping
-    @Operation(summary = "Listar inventario", description = "Obtiene todos los productos del inventario")
+    @Operation(
+            summary = "Listar inventario",
+            description = "Obtiene todos los productos del inventario",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista obtenida"),
+                    @ApiResponse(responseCode = "404", description = "Inventario vacío", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error interno", content = @Content)
+            }
+    )
     public ResponseEntity<?> listarInventario() {
         try {
             List<Inventory> inventario = inventoryService.getAllInventory();
@@ -35,7 +45,14 @@ public class inventoryController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener producto por ID", description = "Obtiene un producto del inventario mediante su ID")
+    @Operation(
+            summary = "Obtener producto por ID",
+            description = "Obtiene un producto del inventario mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto encontrado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> obtenerInventario(@PathVariable int id) {
         try {
             Inventory item = inventoryService.getInventoryId(id);
@@ -47,7 +64,14 @@ public class inventoryController {
     }
 
     @PostMapping
-    @Operation(summary = "Agregar producto al inventario", description = "Agrega un nuevo producto al inventario")
+    @Operation(
+            summary = "Agregar producto al inventario",
+            description = "Agrega un nuevo producto al inventario",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Producto agregado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Error al agregar el producto", content = @Content)
+            }
+    )
     public ResponseEntity<?> agregarInventario(@RequestBody Inventory inventory) {
         try {
             Inventory nuevo = inventoryService.addProduct(inventory);
@@ -59,7 +83,15 @@ public class inventoryController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar inventario", description = "Actualiza el stock de un producto existente")
+    @Operation(
+            summary = "Actualizar inventario",
+            description = "Actualiza el stock de un producto existente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto actualizado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Error al actualizar", content = @Content)
+            }
+    )
     public ResponseEntity<?> actualizarInventario(@PathVariable int id, @RequestBody Inventory inventarioActualizado) {
         try {
             Inventory inventarioExistente = inventoryService.getInventoryId(id);
@@ -76,7 +108,15 @@ public class inventoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar producto", description = "Elimina un producto del inventario mediante su ID")
+    @Operation(
+            summary = "Eliminar producto",
+            description = "Elimina un producto del inventario mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto eliminado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error al eliminar", content = @Content)
+            }
+    )
     public ResponseEntity<?> eliminarInventario(@PathVariable int id) {
         try {
             inventoryService.deleteProduct(id);

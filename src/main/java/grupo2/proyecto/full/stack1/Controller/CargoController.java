@@ -3,6 +3,9 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.Cargo;
 import grupo2.proyecto.full.stack1.Service.cargoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +22,11 @@ public class CargoController {
     private cargoService cargoService;
 
     @GetMapping
-    @Operation(summary = " Obtener todos los cargos", description = "obtiene una lista de todos l0s largos")
+    @Operation(summary = "Obtener todos los cargos", description = "Obtiene una lista de todos los cargos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de cargos obtenida exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No hay cargos registrados")
+    })
     public ResponseEntity<?> listarCargos() {
         List<Cargo> cargos = cargoService.findAll();
         if (cargos.isEmpty()) {
@@ -30,8 +37,14 @@ public class CargoController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = " Obtener cargo por id", description = "Obtiene todos los cargos por ID")
-    public ResponseEntity<?> obtenerCargo(@PathVariable int id) {
+    @Operation(summary = "Obtener cargo por ID", description = "Obtiene un cargo específico dado su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cargo encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cargo no encontrado")
+    })
+    public ResponseEntity<?> obtenerCargo(
+            @Parameter(description = "ID del cargo a obtener", required = true)
+            @PathVariable int id) {
         try {
             Cargo cargo = cargoService.findById(id);
             return ResponseEntity.ok(cargo);
@@ -41,10 +54,14 @@ public class CargoController {
         }
     }
 
-
     @PostMapping
-    @Operation(summary = " Publica un Cargo", description = "Publica un cargo nuevo")
-    public ResponseEntity<?> crearCargo(@RequestBody Cargo nuevoCargo) {
+    @Operation(summary = "Crear un nuevo cargo", description = "Crea y guarda un nuevo cargo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cargo creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos para crear el cargo")
+    })
+    public ResponseEntity<?> crearCargo(
+            @RequestBody Cargo nuevoCargo) {
         try {
             Cargo guardado = cargoService.save(nuevoCargo);
             return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
@@ -55,8 +72,16 @@ public class CargoController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = " Edita un Cargo", description = "Edita los Cargos existentes")
-    public ResponseEntity<?> actualizarCargo(@PathVariable int id, @RequestBody Cargo cargoActualizado) {
+    @Operation(summary = "Actualizar un cargo existente", description = "Actualiza los datos de un cargo dado su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cargo actualizado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Cargo no encontrado"),
+            @ApiResponse(responseCode = "400", description = "Error al actualizar el cargo")
+    })
+    public ResponseEntity<?> actualizarCargo(
+            @Parameter(description = "ID del cargo a actualizar", required = true)
+            @PathVariable int id,
+            @RequestBody Cargo cargoActualizado) {
         try {
             Cargo existente = cargoService.findById(id);
 
@@ -75,10 +100,16 @@ public class CargoController {
         }
     }
 
-
     @DeleteMapping("/{id}")
-    @Operation(summary = "Borra un Cargo", description = "Borra los Cargos existentes")
-    public ResponseEntity<?> eliminarCargo(@PathVariable int id) {
+    @Operation(summary = "Eliminar un cargo", description = "Elimina un cargo dado su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cargo eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Cargo no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno al eliminar el cargo")
+    })
+    public ResponseEntity<?> eliminarCargo(
+            @Parameter(description = "ID del cargo a eliminar", required = true)
+            @PathVariable int id) {
         try {
             Cargo existente = cargoService.findById(id);
             cargoService.delete(id);

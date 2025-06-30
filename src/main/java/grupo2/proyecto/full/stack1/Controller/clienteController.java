@@ -3,6 +3,9 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.Cliente;
 import grupo2.proyecto.full.stack1.Service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +22,11 @@ public class clienteController {
     private ClienteService clienteService;
 
     @GetMapping
-    @Operation(summary = "Listar todos los clientes", description = "Retorna una lista con todos los clientes registrados en el sistema.")
+    @Operation(summary = "Listar todos los clientes", description = "Retorna una lista con todos los clientes registrados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de clientes obtenida exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No hay clientes registrados")
+    })
     public ResponseEntity<?> listarClientes() {
         List<Cliente> clientes = clienteService.findAll();
         if (clientes.isEmpty()) {
@@ -30,8 +37,13 @@ public class clienteController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener cliente por ID", description = "Retorna la información de un cliente específico usando su ID.")
-    public ResponseEntity<?> obtenerCliente(@PathVariable int id) {
+    @Operation(summary = "Obtener cliente por ID", description = "Retorna la información de un cliente específico usando su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
+    public ResponseEntity<?> obtenerCliente(
+            @Parameter(description = "ID del cliente", required = true) @PathVariable int id) {
         try {
             Cliente cliente = clienteService.findById(id);
             return ResponseEntity.ok(cliente);
@@ -42,7 +54,11 @@ public class clienteController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear un nuevo cliente", description = "Registra un nuevo cliente en el sistema con los datos proporcionados.")
+    @Operation(summary = "Crear un nuevo cliente", description = "Registra un nuevo cliente en el sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     public ResponseEntity<?> crearCliente(@RequestBody Cliente nuevoCliente) {
         try {
             Cliente guardado = clienteService.save(nuevoCliente);
@@ -54,15 +70,21 @@ public class clienteController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar un cliente", description = "Actualiza la información de un cliente existente con el ID proporcionado.")
-    public ResponseEntity<?> actualizarCliente(@PathVariable int id, @RequestBody Cliente clienteActualizado) {
+    @Operation(summary = "Actualizar cliente", description = "Actualiza los datos de un cliente existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Error al actualizar"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
+    public ResponseEntity<?> actualizarCliente(
+            @Parameter(description = "ID del cliente", required = true) @PathVariable int id,
+            @RequestBody Cliente clienteActualizado) {
         try {
             Cliente existente = clienteService.findById(id);
             existente.setNombre(clienteActualizado.getNombre());
             existente.setApellido(clienteActualizado.getApellido());
             existente.setEmail(clienteActualizado.getEmail());
             existente.setRol(clienteActualizado.getRol());
-
             Cliente actualizado = clienteService.save(existente);
             return ResponseEntity.ok(actualizado);
         } catch (NoSuchElementException e) {
@@ -75,8 +97,14 @@ public class clienteController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar un cliente", description = "Elimina un cliente existente del sistema utilizando su ID.")
-    public ResponseEntity<?> eliminarCliente(@PathVariable int id) {
+    @Operation(summary = "Eliminar cliente", description = "Elimina un cliente existente del sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno al eliminar")
+    })
+    public ResponseEntity<?> eliminarCliente(
+            @Parameter(description = "ID del cliente", required = true) @PathVariable int id) {
         try {
             clienteService.findById(id);
             clienteService.delete(id);

@@ -3,6 +3,8 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.Product;
 import grupo2.proyecto.full.stack1.Service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -19,7 +21,14 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    @Operation(summary = "Listar productos", description = "Obtiene una lista de todos los productos registrados")
+    @Operation(
+            summary = "Listar productos",
+            description = "Obtiene una lista de todos los productos registrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Productos encontrados"),
+                    @ApiResponse(responseCode = "404", description = "No hay productos registrados", content = @Content)
+            }
+    )
     public ResponseEntity<?> listarProductos() {
         List<Product> productos = productService.findAll();
         if (productos.isEmpty()) {
@@ -30,7 +39,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener producto por ID", description = "Obtiene la información de un producto mediante su ID")
+    @Operation(
+            summary = "Obtener producto por ID",
+            description = "Obtiene la información de un producto mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto encontrado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> obtenerProducto(@PathVariable int id) {
         try {
             Product producto = productService.findById(id);
@@ -42,7 +58,14 @@ public class ProductController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear producto", description = "Registra un nuevo producto")
+    @Operation(
+            summary = "Crear producto",
+            description = "Registra un nuevo producto",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Producto creado"),
+                    @ApiResponse(responseCode = "400", description = "Error al crear el producto", content = @Content)
+            }
+    )
     public ResponseEntity<?> crearProducto(@RequestBody Product nuevoProducto) {
         try {
             Product productoGuardado = productService.save(nuevoProducto);
@@ -54,7 +77,15 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar producto", description = "Actualiza la información de un producto existente")
+    @Operation(
+            summary = "Actualizar producto",
+            description = "Actualiza la información de un producto existente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto actualizado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "400", description = "Error al actualizar", content = @Content)
+            }
+    )
     public ResponseEntity<?> actualizarProducto(@PathVariable int id, @RequestBody Product productoActualizado) {
         try {
             Product productoExistente = productService.findById(id);
@@ -75,10 +106,18 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar producto", description = "Elimina un producto mediante su ID")
+    @Operation(
+            summary = "Eliminar producto",
+            description = "Elimina un producto mediante su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto eliminado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error al eliminar", content = @Content)
+            }
+    )
     public ResponseEntity<?> eliminarProducto(@PathVariable int id) {
         try {
-            productService.findById(id);
+            productService.findById(id);  // Para verificar existencia antes de eliminar
             productService.delete(id);
             return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado correctamente."));
         } catch (NoSuchElementException e) {

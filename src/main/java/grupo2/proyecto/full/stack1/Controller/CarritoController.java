@@ -2,10 +2,13 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Carrito;
 import grupo2.proyecto.full.stack1.Service.carritoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -18,9 +21,12 @@ public class CarritoController {
     @Autowired
     private carritoService carritoService;
 
-
     @GetMapping
-    @Operation(summary = " Obtener todos los Carros", description = "obtiene una lista de todos Carritos de compra")
+    @Operation(summary = "Obtener todos los carritos", description = "Obtiene una lista de todos los carritos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de carritos obtenida exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No hay carritos registrados")
+    })
     public ResponseEntity<?> listarCarritos() {
         List<Carrito> carritos = carritoService.listarCarritos();
         if (carritos.isEmpty()) {
@@ -30,10 +36,14 @@ public class CarritoController {
         return ResponseEntity.ok(carritos);
     }
 
-
     @GetMapping("/{id}")
-    @Operation(summary = " Obtener carrito por id", description = "obtiene una lista de los carritos por ID")
-    public ResponseEntity<?> obtenerCarrito(@PathVariable int id) {
+    @Operation(summary = "Obtener carrito por ID", description = "Obtiene un carrito específico por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
+            @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
+    })
+    public ResponseEntity<?> obtenerCarrito(
+            @Parameter(description = "ID del carrito", required = true) @PathVariable int id) {
         try {
             Carrito carrito = carritoService.findById(id);
             return ResponseEntity.ok(carrito);
@@ -43,9 +53,12 @@ public class CarritoController {
         }
     }
 
-
     @PostMapping
-    @Operation(summary = " Publicar un carrito ", description = "Publicar un carrito nuevo")
+    @Operation(summary = "Crear un nuevo carrito", description = "Registra un nuevo carrito en el sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Carrito creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     public ResponseEntity<?> crearCarrito(@RequestBody Carrito nuevoCarrito) {
         try {
             Carrito guardado = carritoService.save(nuevoCarrito);
@@ -56,10 +69,16 @@ public class CarritoController {
         }
     }
 
-
     @PutMapping("/{id}")
-    @Operation(summary = " Editar un carrito", description = "Editar un carrito por Id")
-    public ResponseEntity<?> actualizarCarrito(@PathVariable int id, @RequestBody Carrito carritoActualizado) {
+    @Operation(summary = "Actualizar carrito", description = "Actualiza un carrito existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrito actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Error al actualizar"),
+            @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
+    })
+    public ResponseEntity<?> actualizarCarrito(
+            @Parameter(description = "ID del carrito", required = true) @PathVariable int id,
+            @RequestBody Carrito carritoActualizado) {
         try {
             Carrito existente = carritoService.findById(id);
             existente.setCliente(carritoActualizado.getCliente());
@@ -74,12 +93,17 @@ public class CarritoController {
         }
     }
 
-
     @DeleteMapping("/{id}")
-    @Operation(summary = " Borrar un carrito", description = "Borrar un carrito por Id")
-    public ResponseEntity<?> eliminarCarrito(@PathVariable int id) {
+    @Operation(summary = "Eliminar carrito", description = "Elimina un carrito por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carrito eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Carrito no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno al eliminar")
+    })
+    public ResponseEntity<?> eliminarCarrito(
+            @Parameter(description = "ID del carrito", required = true) @PathVariable int id) {
         try {
-            carritoService.findById(id); // Validar existencia
+            carritoService.findById(id);
             carritoService.delete(id);
             return ResponseEntity.ok(Map.of("mensaje", "Carrito eliminado correctamente."));
         } catch (NoSuchElementException e) {
