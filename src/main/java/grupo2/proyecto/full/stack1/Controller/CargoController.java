@@ -2,16 +2,22 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Cargo;
 import grupo2.proyecto.full.stack1.Service.cargoService;
+import grupo2.proyecto.full.stack1.Assembler.CargoModelAssembler;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/cargo")
@@ -20,6 +26,9 @@ public class CargoController {
 
     @Autowired
     private cargoService cargoService;
+
+    @Autowired
+    private CargoModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Obtener todos los cargos", description = "Obtiene una lista de todos los cargos")
@@ -33,7 +42,15 @@ public class CargoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay cargos registrados."));
         }
-        return ResponseEntity.ok(cargos);
+
+        List<EntityModel<Cargo>> cargosConLinks = cargos.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        CollectionModel<EntityModel<Cargo>> collectionModel = CollectionModel.of(cargosConLinks,
+                linkTo(methodOn(CargoController.class).listarCargos()).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     @GetMapping("/{id}")
@@ -47,7 +64,7 @@ public class CargoController {
             @PathVariable int id) {
         try {
             Cargo cargo = cargoService.findById(id);
-            return ResponseEntity.ok(cargo);
+            return ResponseEntity.ok(assembler.toModel(cargo));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Cargo no encontrado con ID: " + id));
@@ -60,11 +77,10 @@ public class CargoController {
             @ApiResponse(responseCode = "201", description = "Cargo creado exitosamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos para crear el cargo")
     })
-    public ResponseEntity<?> crearCargo(
-            @RequestBody Cargo nuevoCargo) {
+    public ResponseEntity<?> crearCargo(@RequestBody Cargo nuevoCargo) {
         try {
             Cargo guardado = cargoService.save(nuevoCargo);
-            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(guardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el cargo."));
@@ -84,13 +100,10 @@ public class CargoController {
             @RequestBody Cargo cargoActualizado) {
         try {
             Cargo existente = cargoService.findById(id);
-
             existente.setNombre(cargoActualizado.getNombre());
             existente.setSalario(cargoActualizado.getSalario());
-
             Cargo actualizado = cargoService.save(existente);
-            return ResponseEntity.ok(actualizado);
-
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Cargo no encontrado con ID: " + id));
