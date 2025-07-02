@@ -5,6 +5,8 @@ import grupo2.proyecto.full.stack1.Service.DetallePedidoService;
 import grupo2.proyecto.full.stack1.Assembler.DetallePedidoModelAssembler;
 
 import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.tags.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
 import org.springframework.http.*;

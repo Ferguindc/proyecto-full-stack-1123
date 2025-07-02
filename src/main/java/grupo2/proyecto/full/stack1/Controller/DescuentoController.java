@@ -5,6 +5,8 @@ import grupo2.proyecto.full.stack1.Service.DescuentoService;
 import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
 
 import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
