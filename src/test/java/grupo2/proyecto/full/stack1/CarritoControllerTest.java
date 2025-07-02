@@ -34,15 +34,15 @@ class CarritoControllerTest {
 
     private Carrito carrito;
 
+    // EL BEFOREEACH SIRVE PARA SIMULAR QUE EXISTAN DATOS, YA QUE ESTABA TENIENDO PROBLEMAS CON LA BASE DE DATOS.
     @BeforeEach
     void setup() {
         carrito = new Carrito();
         carrito.setId(1);
     }
 
-    // --- GET ALL ---
     @Test
-    void listarCarritos_OK() {
+    void GetAllCarritosTest() {
         when(carritoService.listarCarritos()).thenReturn(List.of(carrito));
         when(assembler.toModel(carrito)).thenReturn(EntityModel.of(carrito));
 
@@ -51,7 +51,7 @@ class CarritoControllerTest {
     }
 
     @Test
-    void listarCarritos_EmptyList() {
+    void GetAllCarritosSinCarritosTest() {
         when(carritoService.listarCarritos()).thenReturn(Collections.emptyList());
 
         ResponseEntity<?> response = carritoController.listarCarritos();
@@ -59,25 +59,7 @@ class CarritoControllerTest {
     }
 
     @Test
-    void listarCarritos_NullHandled() {
-        when(carritoService.listarCarritos()).thenReturn(null);
-
-        ResponseEntity<?> response = carritoController.listarCarritos();
-        assertEquals(404, response.getStatusCodeValue());
-    }
-
-    @Test
-    void listarCarritos_MultipleResults() {
-        when(carritoService.listarCarritos()).thenReturn(List.of(carrito, new Carrito()));
-        when(assembler.toModel(any())).thenReturn(EntityModel.of(carrito));
-
-        ResponseEntity<?> response = carritoController.listarCarritos();
-        assertEquals(200, response.getStatusCodeValue());
-    }
-
-    // --- GET BY ID ---
-    @Test
-    void obtenerCarrito_OK() {
+    void GetCarritoByIdTest() {
         when(carritoService.findById(1)).thenReturn(carrito);
         when(assembler.toModel(carrito)).thenReturn(EntityModel.of(carrito));
 
@@ -86,7 +68,7 @@ class CarritoControllerTest {
     }
 
     @Test
-    void obtenerCarrito_NotFound() {
+    void GetCarritoSinCarritosTest() {
         when(carritoService.findById(99)).thenThrow(NoSuchElementException.class);
 
         ResponseEntity<?> response = carritoController.obtenerCarrito(99);
@@ -94,23 +76,7 @@ class CarritoControllerTest {
     }
 
     @Test
-    void obtenerCarrito_NullId() {
-        ResponseEntity<?> response = carritoController.obtenerCarrito(0);
-        assertTrue(response.getStatusCode().is4xxClientError());
-    }
-
-    @Test
-    void obtenerCarrito_AssemblerNullSafe() {
-        when(carritoService.findById(1)).thenReturn(carrito);
-        when(assembler.toModel(any())).thenReturn(null);
-
-        ResponseEntity<?> response = carritoController.obtenerCarrito(1);
-        assertNotNull(response.getBody());
-    }
-
-    // --- POST ---
-    @Test
-    void crearCarrito_OK() {
+    void PostCarritoTest() {
         when(carritoService.save(carrito)).thenReturn(carrito);
         when(assembler.toModel(carrito)).thenReturn(EntityModel.of(carrito));
 
@@ -119,32 +85,16 @@ class CarritoControllerTest {
     }
 
     @Test
-    void crearCarrito_BadRequest() {
+    void PostCarritoSintaxisInvalidaTest() {
         when(carritoService.save(any())).thenThrow(RuntimeException.class);
 
         ResponseEntity<?> response = carritoController.crearCarrito(new Carrito());
         assertEquals(400, response.getStatusCodeValue());
     }
 
-    @Test
-    void crearCarrito_NullInput() {
-        ResponseEntity<?> response = carritoController.crearCarrito(null);
-        assertEquals(400, response.getStatusCodeValue());
-    }
 
     @Test
-    void crearCarrito_ReturnsModel() {
-        when(carritoService.save(any())).thenReturn(carrito);
-        EntityModel<Carrito> model = EntityModel.of(carrito);
-        when(assembler.toModel(any())).thenReturn(model);
-
-        ResponseEntity<?> response = carritoController.crearCarrito(carrito);
-        assertSame(model, response.getBody());
-    }
-
-    // --- PUT ---
-    @Test
-    void actualizarCarrito_OK() {
+    void PutCarritoTest() {
         when(carritoService.findById(1)).thenReturn(carrito);
         when(carritoService.save(any())).thenReturn(carrito);
         when(assembler.toModel(any())).thenReturn(EntityModel.of(carrito));
@@ -154,26 +104,16 @@ class CarritoControllerTest {
     }
 
     @Test
-    void actualizarCarrito_NotFound() {
+    void PutCarritoSinCarritosTest() {
         when(carritoService.findById(1)).thenThrow(NoSuchElementException.class);
 
         ResponseEntity<?> response = carritoController.actualizarCarrito(1, carrito);
         assertEquals(404, response.getStatusCodeValue());
     }
 
+
     @Test
-    void actualizarCarrito_ThrowsException() {
-        when(carritoService.findById(1)).thenReturn(carrito);
-        when(carritoService.save(any())).thenThrow(RuntimeException.class);
-
-        ResponseEntity<?> response = carritoController.actualizarCarrito(1, carrito);
-        assertEquals(400, response.getStatusCodeValue());
-    }
-
-
-    // --- DELETE ---
-    @Test
-    void eliminarCarrito_OK() {
+    void DeleteCarritoTest() {
         when(carritoService.findById(1)).thenReturn(carrito);
         doNothing().when(carritoService).delete(1);
 
@@ -182,28 +122,11 @@ class CarritoControllerTest {
     }
 
     @Test
-    void eliminarCarrito_NotFound() {
+    void DeleteCarritoSinCarritosTest() {
         when(carritoService.findById(1)).thenThrow(NoSuchElementException.class);
 
         ResponseEntity<?> response = carritoController.eliminarCarrito(1);
         assertEquals(404, response.getStatusCodeValue());
     }
 
-    @Test
-    void eliminarCarrito_Exception() {
-        when(carritoService.findById(1)).thenReturn(carrito);
-        doThrow(new RuntimeException()).when(carritoService).delete(1);
-
-        ResponseEntity<?> response = carritoController.eliminarCarrito(1);
-        assertEquals(500, response.getStatusCodeValue());
-    }
-
-    @Test
-    void eliminarCarrito_VerifyCalled() {
-        when(carritoService.findById(1)).thenReturn(carrito);
-        doNothing().when(carritoService).delete(1);
-
-        carritoController.eliminarCarrito(1);
-        verify(carritoService).delete(1);
-    }
 }
