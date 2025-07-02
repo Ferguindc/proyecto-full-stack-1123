@@ -2,16 +2,22 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Carrito;
 import grupo2.proyecto.full.stack1.Service.carritoService;
+import grupo2.proyecto.full.stack1.Assembler.CarritoModelAssembler;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/carrito")
@@ -20,6 +26,9 @@ public class CarritoController {
 
     @Autowired
     private carritoService carritoService;
+
+    @Autowired
+    private CarritoModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Obtener todos los carritos", description = "Obtiene una lista de todos los carritos")
@@ -33,7 +42,15 @@ public class CarritoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay carritos registrados."));
         }
-        return ResponseEntity.ok(carritos);
+
+        List<EntityModel<Carrito>> carritosConLinks = carritos.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        CollectionModel<EntityModel<Carrito>> collectionModel = CollectionModel.of(carritosConLinks,
+                linkTo(methodOn(CarritoController.class).listarCarritos()).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     @GetMapping("/{id}")
@@ -46,7 +63,7 @@ public class CarritoController {
             @Parameter(description = "ID del carrito", required = true) @PathVariable int id) {
         try {
             Carrito carrito = carritoService.findById(id);
-            return ResponseEntity.ok(carrito);
+            return ResponseEntity.ok(assembler.toModel(carrito));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Carrito no encontrado con ID: " + id));
@@ -62,7 +79,7 @@ public class CarritoController {
     public ResponseEntity<?> crearCarrito(@RequestBody Carrito nuevoCarrito) {
         try {
             Carrito guardado = carritoService.save(nuevoCarrito);
-            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(guardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el carrito."));
@@ -83,7 +100,7 @@ public class CarritoController {
             Carrito existente = carritoService.findById(id);
             existente.setCliente(carritoActualizado.getCliente());
             Carrito actualizado = carritoService.save(existente);
-            return ResponseEntity.ok(actualizado);
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Carrito no encontrado con ID: " + id));

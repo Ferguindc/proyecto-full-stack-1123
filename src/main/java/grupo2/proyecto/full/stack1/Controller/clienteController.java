@@ -1,4 +1,7 @@
 package grupo2.proyecto.full.stack1.Controller;
+import grupo2.proyecto.full.stack1.Assembler.ClienteModelAssembler;
+import org.springframework.hateoas.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import grupo2.proyecto.full.stack1.Modelo.Cliente;
 import grupo2.proyecto.full.stack1.Service.ClienteService;
@@ -19,6 +22,9 @@ import java.util.*;
 public class clienteController {
 
     @Autowired
+    private ClienteModelAssembler assembler;
+
+    @Autowired
     private ClienteService clienteService;
 
     @GetMapping
@@ -33,8 +39,15 @@ public class clienteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay clientes registrados."));
         }
-        return ResponseEntity.ok(clientes);
+
+        List<EntityModel<Cliente>> clientesConLinks = clientes.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(clientesConLinks,
+                linkTo(methodOn(clienteController.class).listarClientes()).withSelfRel()));
     }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener cliente por ID", description = "Retorna la información de un cliente específico usando su ID")
@@ -42,16 +55,16 @@ public class clienteController {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
-    public ResponseEntity<?> obtenerCliente(
-            @Parameter(description = "ID del cliente", required = true) @PathVariable int id) {
+    public ResponseEntity<?> obtenerCliente(@PathVariable int id) {
         try {
             Cliente cliente = clienteService.findById(id);
-            return ResponseEntity.ok(cliente);
+            return ResponseEntity.ok(assembler.toModel(cliente));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Cliente no encontrado con ID: " + id));
         }
     }
+
 
     @PostMapping
     @Operation(summary = "Crear un nuevo cliente", description = "Registra un nuevo cliente en el sistema")
@@ -62,12 +75,13 @@ public class clienteController {
     public ResponseEntity<?> crearCliente(@RequestBody Cliente nuevoCliente) {
         try {
             Cliente guardado = clienteService.save(nuevoCliente);
-            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(guardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el cliente."));
         }
     }
+
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar cliente", description = "Actualiza los datos de un cliente existente")
@@ -76,9 +90,7 @@ public class clienteController {
             @ApiResponse(responseCode = "400", description = "Error al actualizar"),
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
-    public ResponseEntity<?> actualizarCliente(
-            @Parameter(description = "ID del cliente", required = true) @PathVariable int id,
-            @RequestBody Cliente clienteActualizado) {
+    public ResponseEntity<?> actualizarCliente(@PathVariable int id, @RequestBody Cliente clienteActualizado) {
         try {
             Cliente existente = clienteService.findById(id);
             existente.setNombre(clienteActualizado.getNombre());
@@ -86,7 +98,7 @@ public class clienteController {
             existente.setEmail(clienteActualizado.getEmail());
             existente.setRol(clienteActualizado.getRol());
             Cliente actualizado = clienteService.save(existente);
-            return ResponseEntity.ok(actualizado);
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Cliente no encontrado con ID: " + id));
@@ -95,6 +107,7 @@ public class clienteController {
                     .body(Map.of("error", "No se pudo actualizar el cliente."));
         }
     }
+
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar cliente", description = "Elimina un cliente existente del sistema")

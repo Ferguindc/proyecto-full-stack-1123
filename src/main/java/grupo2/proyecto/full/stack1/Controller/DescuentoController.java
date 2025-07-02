@@ -2,16 +2,18 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.descuento;
 import grupo2.proyecto.full.stack1.Service.DescuentoService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
+
+import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/descuento")
@@ -20,6 +22,9 @@ public class DescuentoController {
 
     @Autowired
     private DescuentoService descuentoService;
+
+    @Autowired
+    private DescuentoModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Listar todos los descuentos", description = "Obtiene una lista de todos los descuentos")
@@ -33,7 +38,13 @@ public class DescuentoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay descuentos registrados."));
         }
-        return ResponseEntity.ok(descuentos);
+
+        List<EntityModel<descuento>> descuentosConLinks = descuentos.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(descuentosConLinks,
+                linkTo(methodOn(DescuentoController.class).listarDescuentos()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
@@ -46,7 +57,7 @@ public class DescuentoController {
             @Parameter(description = "ID del descuento", required = true) @PathVariable int id) {
         try {
             descuento d = descuentoService.findById(id);
-            return ResponseEntity.ok(d);
+            return ResponseEntity.ok(assembler.toModel(d));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Descuento no encontrado con ID: " + id));
@@ -62,7 +73,7 @@ public class DescuentoController {
     public ResponseEntity<?> crearDescuento(@RequestBody descuento nuevoDescuento) {
         try {
             descuento descuentoGuardado = descuentoService.save(nuevoDescuento);
-            return ResponseEntity.status(HttpStatus.CREATED).body(descuentoGuardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(descuentoGuardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el descuento."));
@@ -84,7 +95,7 @@ public class DescuentoController {
             existente.setTipodDescuento(descuentoActualizado.getTipodDescuento());
             existente.setDescuento(descuentoActualizado.getDescuento());
             descuento actualizado = descuentoService.save(existente);
-            return ResponseEntity.ok(actualizado);
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Descuento no encontrado con ID: " + id));

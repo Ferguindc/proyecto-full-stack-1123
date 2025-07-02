@@ -2,16 +2,17 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.detallePedido;
 import grupo2.proyecto.full.stack1.Service.DetallePedidoService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import grupo2.proyecto.full.stack1.Assembler.DetallePedidoModelAssembler;
+
+import io.swagger.v3.oas.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/detalle-pedido")
@@ -20,6 +21,9 @@ public class detallePedidoController {
 
     @Autowired
     private DetallePedidoService detallePedidoService;
+
+    @Autowired
+    private DetallePedidoModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Listar todos los detalles de pedidos", description = "Obtiene una lista con todos los detalles de pedidos registrados.")
@@ -33,7 +37,13 @@ public class detallePedidoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay detalles de pedidos registrados."));
         }
-        return ResponseEntity.ok(detalles);
+
+        List<EntityModel<detallePedido>> detallesConLinks = detalles.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(detallesConLinks,
+                linkTo(methodOn(detallePedidoController.class).listarDetalles()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
@@ -42,11 +52,10 @@ public class detallePedidoController {
             @ApiResponse(responseCode = "200", description = "Detalle encontrado"),
             @ApiResponse(responseCode = "404", description = "Detalle no encontrado")
     })
-    public ResponseEntity<?> obtenerDetalle(
-            @Parameter(description = "ID del detalle de pedido", required = true) @PathVariable int id) {
+    public ResponseEntity<?> obtenerDetalle(@PathVariable int id) {
         try {
             detallePedido detalle = detallePedidoService.findById(id);
-            return ResponseEntity.ok(detalle);
+            return ResponseEntity.ok(assembler.toModel(detalle));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Detalle de pedido no encontrado con ID: " + id));
@@ -62,7 +71,7 @@ public class detallePedidoController {
     public ResponseEntity<?> crearDetalle(@RequestBody detallePedido nuevoDetalle) {
         try {
             detallePedido guardado = detallePedidoService.save(nuevoDetalle);
-            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(guardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el detalle de pedido."));
@@ -76,9 +85,7 @@ public class detallePedidoController {
             @ApiResponse(responseCode = "400", description = "Error al actualizar"),
             @ApiResponse(responseCode = "404", description = "Detalle no encontrado")
     })
-    public ResponseEntity<?> actualizarDetalle(
-            @Parameter(description = "ID del detalle de pedido", required = true) @PathVariable int id,
-            @RequestBody detallePedido detalleActualizado) {
+    public ResponseEntity<?> actualizarDetalle(@PathVariable int id, @RequestBody detallePedido detalleActualizado) {
         try {
             detallePedido existente = detallePedidoService.findById(id);
             existente.setCantidadProductos(detalleActualizado.getCantidadProductos());
@@ -86,7 +93,7 @@ public class detallePedidoController {
             existente.setProduct(detalleActualizado.getProduct());
             existente.setPedido(detalleActualizado.getPedido());
             detallePedido actualizado = detallePedidoService.save(existente);
-            return ResponseEntity.ok(actualizado);
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Detalle de pedido no encontrado con ID: " + id));
@@ -103,8 +110,7 @@ public class detallePedidoController {
             @ApiResponse(responseCode = "404", description = "Detalle no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno al eliminar")
     })
-    public ResponseEntity<?> eliminarDetalle(
-            @Parameter(description = "ID del detalle de pedido", required = true) @PathVariable int id) {
+    public ResponseEntity<?> eliminarDetalle(@PathVariable int id) {
         try {
             detallePedido existente = detallePedidoService.findById(id);
             detallePedidoService.delete(id);
