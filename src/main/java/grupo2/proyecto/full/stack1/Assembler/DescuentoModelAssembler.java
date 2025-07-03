@@ -9,7 +9,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @Component
-public class DescuentoModelAseembler implements RepresentationModelAssembler<descuento, EntityModel<descuento>> {
+public class DescuentoModelAssembler implements RepresentationModelAssembler<descuento, EntityModel<descuento>> {
 
 
     @Override
