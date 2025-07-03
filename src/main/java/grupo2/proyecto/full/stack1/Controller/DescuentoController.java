@@ -2,9 +2,11 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.descuento;
 import grupo2.proyecto.full.stack1.Service.DescuentoService;
-import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
+import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAseembler;
 
 import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
@@ -24,7 +26,7 @@ public class DescuentoController {
     private DescuentoService descuentoService;
 
     @Autowired
-    private DescuentoModelAssembler assembler;
+    private DescuentoModelAseembler assembler;
 
     @GetMapping
     @Operation(summary = "Listar todos los descuentos", description = "Obtiene una lista de todos los descuentos")
