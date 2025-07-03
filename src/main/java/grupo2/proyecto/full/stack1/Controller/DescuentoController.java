@@ -1,8 +1,8 @@
 package grupo2.proyecto.full.stack1.Controller;
 
+import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
 import grupo2.proyecto.full.stack1.Modelo.descuento;
 import grupo2.proyecto.full.stack1.Service.DescuentoService;
-import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAseembler;
 
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ public class DescuentoController {
     private DescuentoService descuentoService;
 
     @Autowired
-    private DescuentoModelAseembler assembler;
+    private DescuentoModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Listar todos los descuentos", description = "Obtiene una lista de todos los descuentos")
