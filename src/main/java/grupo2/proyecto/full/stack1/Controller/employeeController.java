@@ -102,7 +102,7 @@ public class employeeController {
             return ResponseEntity.ok(assembler.toModel(empleadoGuardado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", e.getMessage()));
+                    .body(Map.of("mensaje", "errorsito del q nadie se dará cuenta pero que ahora hace que funcione otra cosita"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo actualizar el empleado."));
