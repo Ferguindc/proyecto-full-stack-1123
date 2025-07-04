@@ -2,15 +2,21 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.pedido;
 import grupo2.proyecto.full.stack1.Service.PedidoService;
+import grupo2.proyecto.full.stack1.Assembler.PedidoModelAssembler;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/pedido")
@@ -19,6 +25,9 @@ public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
+
+    @Autowired
+    private PedidoModelAssembler assembler;
 
     @GetMapping
     @Operation(
@@ -35,7 +44,13 @@ public class PedidoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay pedidos registrados."));
         }
-        return ResponseEntity.ok(pedidos);
+
+        List<EntityModel<pedido>> pedidosConLinks = pedidos.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(pedidosConLinks,
+                linkTo(methodOn(PedidoController.class).listarPedidos()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
@@ -50,7 +65,7 @@ public class PedidoController {
     public ResponseEntity<?> obtenerPedido(@PathVariable int id) {
         try {
             pedido p = pedidoService.findById(id);
-            return ResponseEntity.ok(p);
+            return ResponseEntity.ok(assembler.toModel(p));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No se encontró el pedido con ID: " + id));
@@ -69,7 +84,7 @@ public class PedidoController {
     public ResponseEntity<?> crearPedido(@RequestBody pedido nuevoPedido) {
         try {
             pedido pedidoGuardado = pedidoService.save(nuevoPedido);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pedidoGuardado);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(pedidoGuardado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el pedido."));
@@ -100,7 +115,7 @@ public class PedidoController {
             pedidoExistente.setSucursal(pedidoActualizado.getSucursal());
 
             pedido pedidoGuardado = pedidoService.save(pedidoExistente);
-            return ResponseEntity.ok(pedidoGuardado);
+            return ResponseEntity.ok(assembler.toModel(pedidoGuardado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Pedido no encontrado con ID: " + id));

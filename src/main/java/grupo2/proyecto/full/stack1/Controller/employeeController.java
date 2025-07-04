@@ -2,16 +2,19 @@ package grupo2.proyecto.full.stack1.Controller;
 
 import grupo2.proyecto.full.stack1.Modelo.Employee;
 import grupo2.proyecto.full.stack1.Service.employeeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import grupo2.proyecto.full.stack1.Assembler.EmployeeModelAssembler;
+
+import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/empleado")
@@ -20,6 +23,9 @@ public class employeeController {
 
     @Autowired
     private employeeService employeeService;
+
+    @Autowired
+    private EmployeeModelAssembler assembler;
 
     @GetMapping
     @Operation(summary = "Listar todos los empleados", description = "Obtiene una lista con todos los empleados registrados en el sistema.")
@@ -33,7 +39,13 @@ public class employeeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No hay empleados registrados."));
         }
-        return ResponseEntity.ok(empleados);
+
+        List<EntityModel<Employee>> empleadosConLinks = empleados.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(empleadosConLinks,
+                linkTo(methodOn(employeeController.class).getAllEmployee()).withSelfRel()));
     }
 
     @GetMapping("/{id}")
@@ -42,11 +54,10 @@ public class employeeController {
             @ApiResponse(responseCode = "200", description = "Empleado encontrado"),
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado")
     })
-    public ResponseEntity<?> getEmployeeById(
-            @Parameter(description = "ID del empleado", required = true) @PathVariable int id) {
+    public ResponseEntity<?> getEmployeeById(@PathVariable int id) {
         try {
             Employee empleado = employeeService.getEmployeeById(id);
-            return ResponseEntity.ok(empleado);
+            return ResponseEntity.ok(assembler.toModel(empleado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "Empleado no encontrado con ID: " + id));
@@ -62,7 +73,7 @@ public class employeeController {
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
         try {
             Employee nuevo = employeeService.addEmployee(employee);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(nuevo));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el empleado."));
@@ -76,9 +87,7 @@ public class employeeController {
             @ApiResponse(responseCode = "400", description = "Error al actualizar"),
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado")
     })
-    public ResponseEntity<?> actualizarEmpleado(
-            @Parameter(description = "ID del empleado", required = true) @PathVariable int id,
-            @RequestBody Employee empleadoActualizado) {
+    public ResponseEntity<?> actualizarEmpleado(@PathVariable int id, @RequestBody Employee empleadoActualizado) {
         try {
             Employee empleadoExistente = employeeService.getEmployeeById(id);
             empleadoExistente.setNombre(empleadoActualizado.getNombre());
@@ -88,8 +97,9 @@ public class employeeController {
             empleadoExistente.setTelefono(empleadoActualizado.getTelefono());
             empleadoExistente.setCargo(empleadoActualizado.getCargo());
             empleadoExistente.setSucursal(empleadoActualizado.getSucursal());
+
             Employee empleadoGuardado = employeeService.addEmployee(empleadoExistente);
-            return ResponseEntity.ok(empleadoGuardado);
+            return ResponseEntity.ok(assembler.toModel(empleadoGuardado));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "errorsito del q nadie se dará cuenta pero que ahora hace que funcione otra cosita"));
@@ -106,8 +116,7 @@ public class employeeController {
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno al eliminar")
     })
-    public ResponseEntity<?> deleteEmployee(
-            @Parameter(description = "ID del empleado", required = true) @PathVariable int id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable int id) {
         try {
             employeeService.deleteEmployee(id);
             return ResponseEntity.ok(Map.of("mensaje", "Empleado eliminado correctamente."));

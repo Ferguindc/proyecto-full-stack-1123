@@ -3,14 +3,21 @@ package grupo2.proyecto.full.stack1.Controller;
 import grupo2.proyecto.full.stack1.Modelo.proveedor;
 import grupo2.proyecto.full.stack1.Repository.proveedorRepository;
 import grupo2.proyecto.full.stack1.Service.ProveedorService;
+import grupo2.proyecto.full.stack1.Assembler.ProveedorModelAssembler;
+
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/proveedor")
@@ -23,22 +30,45 @@ public class proveedorController {
     @Autowired
     private ProveedorService proveedorService;
 
+    @Autowired
+    private ProveedorModelAssembler assembler;
+
     @GetMapping
-    @Operation(summary = "Listar proveedores", description = "Obtiene todos los proveedores registrados")
+    @Operation(
+            summary = "Listar proveedores",
+            description = "Obtiene todos los proveedores registrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de proveedores obtenida"),
+                    @ApiResponse(responseCode = "204", description = "No hay proveedores registrados", content = @Content)
+            }
+    )
     public ResponseEntity<?> listarProveedor() {
         List<proveedor> proveedores = proveedorRepository.findAll();
         if (proveedores.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(proveedores);
+
+        List<EntityModel<proveedor>> proveedoresConLinks = proveedores.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(CollectionModel.of(proveedoresConLinks,
+                linkTo(methodOn(proveedorController.class).listarProveedor()).withSelfRel()));
     }
 
     @PostMapping
-    @Operation(summary = "Crear proveedor", description = "Registra un nuevo proveedor")
+    @Operation(
+            summary = "Crear proveedor",
+            description = "Registra un nuevo proveedor",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Proveedor creado exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Error al crear el proveedor", content = @Content)
+            }
+    )
     public ResponseEntity<?> crearProveedor(@RequestBody proveedor proveedor) {
         try {
             proveedor proveedorNuevo = proveedorRepository.save(proveedor);
-            return ResponseEntity.status(HttpStatus.CREATED).body(proveedorNuevo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(assembler.toModel(proveedorNuevo));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "No se pudo crear el proveedor."));
@@ -46,11 +76,18 @@ public class proveedorController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar proveedor por ID", description = "Busca un proveedor según su ID")
+    @Operation(
+            summary = "Buscar proveedor por ID",
+            description = "Busca un proveedor según su ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Proveedor encontrado"),
+                    @ApiResponse(responseCode = "404", description = "Proveedor no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> buscarProveedor(@PathVariable int id) {
         try {
-            proveedor proveedor = proveedorService.findById(id);
-            return ResponseEntity.ok(proveedor);
+            proveedor p = proveedorService.findById(id);
+            return ResponseEntity.ok(assembler.toModel(p));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No se encontró el proveedor con ID: " + id));
@@ -58,7 +95,14 @@ public class proveedorController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar proveedor", description = "Actualiza los datos de un proveedor existente")
+    @Operation(
+            summary = "Actualizar proveedor",
+            description = "Actualiza los datos de un proveedor existente",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Proveedor actualizado"),
+                    @ApiResponse(responseCode = "404", description = "Proveedor no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> actualizarProveedor(@PathVariable int id, @RequestBody proveedor proveedor) {
         try {
             proveedor buscado = proveedorService.findById(id);
@@ -66,8 +110,9 @@ public class proveedorController {
             buscado.setNombreProveedor(proveedor.getNombreProveedor());
             buscado.setTelefonoProveedor(proveedor.getTelefonoProveedor());
             buscado.setEmailProveedor(proveedor.getEmailProveedor());
-            proveedorRepository.save(buscado);
-            return ResponseEntity.ok(buscado);
+
+            proveedor actualizado = proveedorRepository.save(buscado);
+            return ResponseEntity.ok(assembler.toModel(actualizado));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("mensaje", "No se pudo actualizar, proveedor no encontrado con ID: " + id));
@@ -75,7 +120,14 @@ public class proveedorController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar proveedor", description = "Elimina un proveedor del sistema")
+    @Operation(
+            summary = "Eliminar proveedor",
+            description = "Elimina un proveedor del sistema",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Proveedor eliminado correctamente"),
+                    @ApiResponse(responseCode = "404", description = "Proveedor no encontrado", content = @Content)
+            }
+    )
     public ResponseEntity<?> eliminarProveedor(@PathVariable int id) {
         try {
             proveedorService.delete(id);

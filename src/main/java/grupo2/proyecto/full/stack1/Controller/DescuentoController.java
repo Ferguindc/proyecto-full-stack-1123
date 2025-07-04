@@ -1,8 +1,8 @@
 package grupo2.proyecto.full.stack1.Controller;
 
+import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
 import grupo2.proyecto.full.stack1.Modelo.descuento;
 import grupo2.proyecto.full.stack1.Service.DescuentoService;
-import grupo2.proyecto.full.stack1.Assembler.DescuentoModelAssembler;
 
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
