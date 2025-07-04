@@ -35,7 +35,7 @@ class CargoControllerTest {
     private Cargo cargoEjemplo;
 
 
-    // EL BEFOREEACH SIRVE PARA SIMULAR QUE EXISTAN DATOS, YA QUE ESTABA TENIENDO PROBLEMAS CON LA BASE DE DATOS.
+    // EL BEFOREEACH SIRVE PARA SIMULAR QUE YA EXISTAN DATOS, YA QUE ESTABA TENIENDO PROBLEMAS CON LA BASE DE DATOS.
     @BeforeEach
     void setUp() {
         cargoEjemplo = new Cargo();
